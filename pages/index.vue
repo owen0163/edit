@@ -9,7 +9,7 @@
             <v-card-title>
               {{ product.name }}
             </v-card-title>
-
+         
             <v-card-text>
               <div> product in stock : {{ product.stock }}</div>
               <div>currentPrice : {{ product.currentPrice }}</div>
