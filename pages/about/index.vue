@@ -39,12 +39,17 @@
 
                       </v-col>
                     </v-row>
-
+                    <v-row justify="center">
+                  <v-col cols="20" md="6" class="justify-center align-center">
+                    <v-select label="Select a product" :items="products.products"   item-value="id"
+                      v-model="selectedProductId" @change="updateSelectedProduct" variant="underlined"></v-select>
+                    </v-col>
+                  </v-row>
                     <v-spacer></v-spacer>
                     <v-container v-if="selectedProduct">
                       <v-form v-model="valid">
                         <v-row justify="center">
-                          <v-col cols="13" md="6">
+                          <v-col cols="13" md="5">
 
                             <p>default Price</p>
                             <v-text-field width="450" variant="outlined">
@@ -52,16 +57,16 @@
                             </v-text-field>
                           </v-col>
 
-                          <v-col cols="12" md="6">
+                          <v-col cols="12" md="5">
                             <p>Current Price</p>
                             <v-text-field v-model="selectedProduct.currentPrice" width="450"
                               variant="outlined"></v-text-field>
                           </v-col>
-                          <v-col cols="12" md="6">
+                          <v-col cols="12" md="5">
                             <p>Stock</p>
                             <v-text-field v-model="selectedProduct.stock" width="450" variant="outlined"></v-text-field>
                           </v-col>
-                          <v-col cols="12" md="6">
+                          <v-col cols="12" md="5">
                             <p>Max Stock</p>
                             <v-text-field v-model="selectedProduct.maxStock" width="450"
                               variant="outlined"></v-text-field>
@@ -100,10 +105,12 @@ import { useProductStore } from '~/stores/pinia';
 const valid = ref(true);
 const products = useProductStore();
 const selectedProduct = ref(null);
-
+const selectedProductId = ref(null);
 
 onMounted(async () => {
   await products.fetchProducts();
+
+  
 });
 
 const openDialog = async (productId) => {
@@ -114,7 +121,11 @@ const openDialog = async (productId) => {
     console.error('Error fetching product:', error);
   }
 };
+const updateSelectedProduct = () => {
+  selectedProduct.value = products.products.find(product => product.id === selectedProductId.value) || null;
+};
 
+watch(selectedProductId, updateSelectedProduct);
 
 const updateProductDetails = async (productId, updatedProduct) => {
   try {
