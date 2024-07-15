@@ -5,7 +5,7 @@
         <div>
           <v-card>
 
-            <v-img height="300px" :src="product.image" cover></v-img>
+            <v-img :height="250" :width="250" :src="product.image" cover></v-img>
             <v-card-title>
               {{ product.name }}
 
@@ -29,7 +29,7 @@
                   <v-card title="Edit Slot 01">
                     <v-divider :thickness="3"></v-divider>
 
-                    <v-row justify="center">
+                    <v-row justify="center" class="mt-3">
                       <v-col cols="13" md="6" lg="4" v-if="selectedProduct" :key="index">
 
                         <v-img height="300px" :src="selectedProduct.image" cover></v-img>
@@ -40,50 +40,56 @@
                       </v-col>
                     </v-row>
                     <v-row justify="center">
-                  <v-col cols="20" md="6" class="justify-center align-center">
-                    <v-select label="Select a product" :items="products.products"   item-value="id"
-                      v-model="selectedProductId" @change="updateSelectedProduct" variant="underlined"></v-select>
-                    </v-col>
-                  </v-row>
+                      <v-col md="9" class="justify-center ">
+
+                        <v-autocomplete label="Products" :items="products.products" item-value="id" item-title="name"
+                          v-model="selectedProductId" @change="updateSelectedProduct" variant="underlined">
+                        </v-autocomplete>
+                      </v-col>
+                    </v-row>
                     <v-spacer></v-spacer>
                     <v-container v-if="selectedProduct">
                       <v-form v-model="valid">
                         <v-row justify="center">
                           <v-col cols="13" md="5">
-
-                            <p>default Price</p>
-                            <v-text-field width="450" variant="outlined">
-                              {{ selectedProduct.defaultPrice }}
-                            </v-text-field>
+                            <v-text-field label="Default Price" width="450" variant="outlined"
+                              :model-value="selectedProduct.defaultPrice" disabled> </v-text-field>
                           </v-col>
 
                           <v-col cols="12" md="5">
-                            <p>Current Price</p>
-                            <v-text-field v-model="selectedProduct.currentPrice" width="450"
-                              variant="outlined"></v-text-field>
+
+
+                            <v-text-field label="Current Price" v-model="selectedProduct.currentPrice" width="450"
+                              variant="outlined" :rules="[rules.currentPrice]"></v-text-field>
                           </v-col>
                           <v-col cols="12" md="5">
-                            <p>Stock</p>
-                            <v-text-field v-model="selectedProduct.stock" width="450" variant="outlined"></v-text-field>
+
+                            <v-text-field label="Stock" v-model="selectedProduct.stock" width="450" variant="outlined"
+                              :rules="[rules.requiredStock, (value) => rules.stockRule(value, selectedProduct.maxStock)]"></v-text-field>
                           </v-col>
                           <v-col cols="12" md="5">
-                            <p>Max Stock</p>
-                            <v-text-field v-model="selectedProduct.maxStock" width="450"
-                              variant="outlined"></v-text-field>
+
+                            <v-text-field label="Max Stock" v-model="selectedProduct.maxStock" width="450"
+                              variant="outlined" :rules="[rules.maxStock]"></v-text-field>
 
 
                           </v-col>
+
                         </v-row>
 
 
                       </v-form>
+
+                      <v-divider :thickness="3"></v-divider>
                     </v-container>
 
                     <v-card-actions>
 
 
-                      <v-spacer></v-spacer>
-                      <v-btn @click="updateProductDetails(selectedProduct.id, selectedProduct)">Update</v-btn>
+                      <!--<v-btn
+                        @click="updateProductDetails(selectedProduct.id, selectedProduct), isActive.value = false">Update
+                      </v-btn> -->
+                      <v-btn @click="submitForm(isActive)">Update</v-btn>
                       <v-btn text="Close " @click="isActive.value = false"></v-btn>
                     </v-card-actions>
                   </v-card>
@@ -102,16 +108,29 @@
 import { ref, onMounted } from 'vue';
 import { useProductStore } from '~/stores/pinia';
 
+
 const valid = ref(true);
 const products = useProductStore();
 const selectedProduct = ref(null);
 const selectedProductId = ref(null);
 
+
+
 onMounted(async () => {
   await products.fetchProducts();
 
-  
+
 });
+
+const submitForm = (isActive) => {
+  const form = ref(null);
+  if (valid.value) {
+    updateProductDetails(selectedProduct.value.id, selectedProduct.value);
+    isActive.value = false;
+  } else {
+    form.value.validate();
+  }
+};
 
 const openDialog = async (productId) => {
   try {
@@ -135,4 +154,30 @@ const updateProductDetails = async (productId, updatedProduct) => {
     console.error('Error updating product:', error);
   }
 };
+
+
+</script>
+
+<script>
+export default {
+  data() {
+    return {
+
+      rules: {
+        currentPrice: value => !!value || 'Please iput Price',
+        maxStock: value => !!value || 'Please iput MaxStock',
+        requiredStock: value => !!value || 'Please iput MaxStock',
+        stockRule:  (value, maxStock) => {
+
+          if (value > maxStock) {
+            return 'Stock cannot exceed max stock'
+          }
+
+          return true
+
+        }
+      }
+    }
+  }
+}
 </script>
