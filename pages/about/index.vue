@@ -26,7 +26,10 @@
                 </template>
 
                 <template v-slot:default="{ isActive }">
-                  <v-card title="Edit Slot 01">
+                  <v-card >
+                          <v-card-title class="mt-3">
+                            <div>Edit Slot {{ selectedProductId }}</div>
+                          </v-card-title>
                     <v-divider :thickness="3"></v-divider>
 
                     <v-row justify="center" class="mt-3">

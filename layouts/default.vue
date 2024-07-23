@@ -11,13 +11,17 @@
   
           <v-spacer></v-spacer>
   
-          <template v-if="$vuetify.display.mdAndUp">
-            <v-btn icon="mdi-magnify" variant="text"></v-btn>
-  
-            <v-btn icon="mdi-filter" variant="text"></v-btn>
-          </template>
-  
-          <v-btn icon="mdi-dots-vertical" variant="text"></v-btn>
+          <template v-if="$vuetify.display.mdAndUp"  >
+     
+      <v-text-field
+        v-model="search"
+        label="Search"
+        prepend-inner-icon="mdi-magnify"
+        variant="outlined"
+        hide-details
+        single-line
+      ></v-text-field>
+    </template>
         </v-app-bar>
   
         <v-navigation-drawer
@@ -34,7 +38,7 @@
   
       
         <v-main >
-        <v-card-text>
+        <v-card-text  :search="search">
           <slot />
         </v-card-text>
       </v-main>
@@ -51,6 +55,7 @@
       data: () => ({
         drawer: false,
         group: null,
+        search: '',
   
       }),
   
