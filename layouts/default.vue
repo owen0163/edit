@@ -31,14 +31,16 @@
         >
           <v-list>
             <v-list-item href="/">ຂໍ້ມູນສິນຄ້າ</v-list-item>
+            <v-list-item href="/add" >ເພີ້ມມູນສິນຄ້າ</v-list-item>
             <v-list-item href="/about" >ຈັດການຂໍ້ມູນສິນຄ້າ</v-list-item>
+            
 
           </v-list>
         </v-navigation-drawer>
   
       
         <v-main >
-        <v-card-text  :search="search">
+        <v-card-text >
           <slot />
         </v-card-text>
       </v-main>

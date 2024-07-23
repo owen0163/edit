@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="13" md="6" lg="2" class=" mt-50px" v-for="product in products.products" :key="product.id"  :search="search">
+      <v-col cols="13" md="6" lg="2" class=" mt-50px" v-for="product in products.products" :key="product.id"  >
         <div>
           <v-card class="mx-auto mt-50px" max-width="344">
 

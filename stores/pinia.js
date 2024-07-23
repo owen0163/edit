@@ -25,16 +25,22 @@ export const useProductStore = defineStore('Product', {
     },
     async updateProduct(id, updatedProduct) {
       try {
-        console.log('Updating product with ID:', id);
         const response = await axios.put(`https://b8fc17f5-f052-43d4-aca5-a3ba283991d5-00-33ml6ruwudc9l.sisko.replit.dev/products/${id}`, updatedProduct);
-        console.log('Product updated response:', response.data);
         await this.fetchProducts();
       } catch (error) {
         console.error('Error updating product:', error);
         throw error;
       }
     },
-
+    async addProduct(newProduct) {
+    
+      try {
+        const response = await axios.post('https://b8fc17f5-f052-43d4-aca5-a3ba283991d5-00-33ml6ruwudc9l.sisko.replit.dev/products/add', newProduct);
+        await this.fetchProducts();
+      } catch (error) {
+        console.error('Error adding product:', error);
+        throw error;
+      }
+    },
   },
-
 });
