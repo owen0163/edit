@@ -14,7 +14,7 @@
                                 :rules="[rules.currentPrice]"></v-text-field>
                             <v-text-field v-model="product.stock" label="Stock" type="number" required
                                 :rules="[rules.stock]"></v-text-field>
-                            <v-text-field v-model="product.maxstock" label="Max Stock" type="number" required
+                            <v-text-field v-model="product.maxStock" label="Max Stock" type="number" required
                                 :rules="[rules.maxStock]"></v-text-field>
                             <v-text-field v-model="product.imageURL" label="Product Image URL" required
                                 :rules="[rules.imageURL]"></v-text-field>
@@ -45,7 +45,7 @@ const product = ref({
     defaultPrice: 0,
     currentPrice: 0,
     stock: 0,
-    maxstock: 0,
+    maxStock: 0,
     imageURL: '',
 });
 const valid = ref(false);
