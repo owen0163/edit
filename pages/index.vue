@@ -19,6 +19,11 @@
                 ລາຍລະອຽດ ສິນຄ້າ
               </v-btn>
             </v-card-actions>
+            <v-card-actions class="d-flex justify-center" ><v-btn variant="elevated" size="x-large" @click="removeProduct(product.id)"
+                color="orange-darken-3">
+                ລົບ ສິນຄ້າ
+              </v-btn>
+            </v-card-actions>
           </v-card>
         </div>
       </v-col>
@@ -37,5 +42,7 @@ onMounted(async () => {
   await products.fetchProducts()
   console.log(products.products)
 })
-
+const removeProduct = async (id) => {
+  await products.removeProduct(id);
+};
 </script>

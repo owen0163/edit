@@ -42,5 +42,15 @@ export const useProductStore = defineStore('Product', {
         throw error;
       }
     },
+   
+    async removeProduct(id) {
+      try {
+        await axios.delete(`https://b8fc17f5-f052-43d4-aca5-a3ba283991d5-00-33ml6ruwudc9l.sisko.replit.dev/products/${id}`);
+        await this.fetchProducts();
+      } catch (error) {
+        console.error('Error deleting product:', error);
+        throw error;
+      }
+    },
   },
 });
