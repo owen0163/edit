@@ -105,7 +105,7 @@ export default {
                 currentPrice: value => !!value || 'Please iput currentPrice',
                 stock: value => !!value || 'Please iput stock',
                 maxStock: value => !!value || 'Please iput MaxStock',
-                imageURL: value => !!value || 'Please iput name',
+                imageURL: value => !!value || 'Please iput imageURL',
             }
         }
     }
