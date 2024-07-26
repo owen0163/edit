@@ -12,7 +12,7 @@
          
             <v-card-text>
               <div> product in stock : {{ product.stock }}</div>
-              <div>currentPrice : {{ product.currentPrice }}</div>
+              <div>currentPrice : {{ product.currentprice }}</div>
             </v-card-text>
             <v-card-actions class="d-flex justify-center"><v-btn variant="elevated" size="x-large"
                 color="orange-darken-3">

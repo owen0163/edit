@@ -13,7 +13,7 @@
 
             <v-card-text>
               <div> product in stock : {{ product.stock }}</div>
-              <div>currentPrice : {{ product.currentPrice }}</div>
+              <div>currentPrice : {{ product.currentprice }}</div>
 
             </v-card-text>
             <v-card-actions>
@@ -37,7 +37,7 @@
 
                         <v-img height="300px" :src="selectedProduct.image" cover></v-img>
                         <div class="text-center"> {{ selectedProduct.name }}</div>
-                        <div class="text-center"> Price : {{ selectedProduct.currentPrice }}</div>
+                        <div class="text-center"> Price : {{ selectedProduct.currentprice }}</div>
                         <div class="text-center"> Qty : {{ selectedProduct.stock }}</div>
 
                       </v-col>
@@ -56,23 +56,23 @@
                         <v-row justify="center">
                           <v-col cols="13" md="5">
                             <v-text-field label="Default Price" width="450" variant="outlined"
-                              :model-value="selectedProduct.defaultPrice" disabled> </v-text-field>
+                              :model-value="selectedProduct.defaultprice" disabled> </v-text-field>
                           </v-col>
 
                           <v-col cols="12" md="5">
 
 
-                            <v-text-field label="Current Price" v-model="selectedProduct.currentPrice" width="450"
+                            <v-text-field label="Current Price" v-model="selectedProduct.currentprice" width="450"
                               variant="outlined" :rules="[rules.currentPrice]"></v-text-field>
                           </v-col>
                           <v-col cols="12" md="5">
 
                             <v-text-field label="Stock" v-model="selectedProduct.stock" width="450" variant="outlined"
-                              :rules="[rules.requiredStock, (value) => rules.stockRule(value, selectedProduct.maxStock)]"></v-text-field>
+                              :rules="[rules.requiredStock, (value) => rules.stockRule(value, selectedProduct.maxstock)]"></v-text-field>
                           </v-col>
                           <v-col cols="12" md="5">
 
-                            <v-text-field label="Max Stock" v-model="selectedProduct.maxStock" width="450"
+                            <v-text-field label="Max Stock" v-model="selectedProduct.maxstock" width="450"
                               variant="outlined" :rules="[rules.maxStock]"></v-text-field>
 
 
