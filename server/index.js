@@ -2,6 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const pool = require('./connect'); 
 const bodyParser = require('body-parser');
+//////////////////
+const jwt = require('jsonwebtoken');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
+
+
 const app = express();
 
 // Middleware
@@ -10,6 +17,8 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+///////////////////
+const secret = 'your_jwt_secret'; // Replace with your actual JWT secret
 // Start server
 const PORT = 3300;
 app.listen(PORT, () => {
@@ -141,6 +150,108 @@ app.delete('/products/:id', async (req, res) => {
   } catch (err) {
     console.error('Error deleting product:', err.stack);
     res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = app;
+/////////////////////////////////////////////////////////////////
+/////// register
+app.post('/api/register', async (req, res) => {
+  const { email, password } = req.body;
+
+  // Validate the required fields
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await pool.query(
+      'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *',
+      [email, hashedPassword]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error registering user', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+////////////////////////////////////////////////////////
+////// login
+app.post('/api/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Query to fetch the user by email
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const user = result.rows[0];
+    const match = await bcrypt.compare(password, user.password)
+
+    if (!match) {
+      res.status(400).json({
+        message: 'login fail(wrong email, pass)'
+       })
+       return false
+    }
+    // If no user is found, return an error
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Compare the provided password with the stored hashed password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    // If the password is incorrect, return an error
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Generate a JWT token
+    const token = jwt.sign({ id: user.id, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
+
+    // Return the token to the client
+    res.json({ 
+      message: 'success ',token
+     });
+  } catch (error) {
+    console.error('Error logging in user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+////////////////////////////////////
+app.get('/users', async (req, res) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    let authToken = '';
+
+    if (authHeader) {
+      authToken = authHeader.split(' ')[1]; // Correctly split by space
+    }
+
+    console.log("authToken:", authToken);
+
+    if (!authToken) {
+      return res.status(403).json({ message: 'Token not provided' });
+    }
+
+    try {
+      const user = jwt.verify(authToken, secret); // Verifying the JWT
+      console.log('user:', user);
+
+      const result = await pool.query('SELECT * FROM users');
+      res.json(result.rows);
+    } catch (err) {
+      console.error('JWT verification error:', err);
+      return res.status(403).json({ 
+        message: 'Authentication failed. Invalid token.'
+      });
+    }
+  } catch (err) {
+    console.error('error:', err);
+    res.status(500).json({
+      message: 'Internal server error'
+    });
   }
 });
 
