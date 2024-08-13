@@ -17,8 +17,7 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-///////////////////
-const secret = 'your_jwt_secret'; // Replace with your actual JWT secret
+
 // Start server
 const PORT = 3300;
 app.listen(PORT, () => {
@@ -208,7 +207,7 @@ app.post('/api/login', async (req, res) => {
     }
 
     // Generate a JWT token
-    const token = jwt.sign({ id: user.id, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, email: user.email}, 'your_jwt_secret', { expiresIn: '1h' });
 
     // Return the token to the client
     res.json({ 
@@ -226,31 +225,36 @@ app.get('/users', async (req, res) => {
     let authToken = '';
 
     if (authHeader) {
-      authToken = authHeader.split(' ')[1]; // Correctly split by space
+      authToken = authHeader.split(' ')[1];
     }
 
-    console.log("authToken:", authToken);
-
-    if (!authToken) {
-      return res.status(403).json({ message: 'Token not provided' });
-    }
+    console.log("authToken", authToken);
 
     try {
-      const user = jwt.verify(authToken, secret); // Verifying the JWT
-      console.log('user:', user);
+      const user = jwt.verify(authToken, 'your_jwt_secret'); 
+      console.log('user', user);
 
+      const checkResult = await pool.query('SELECT * FROM users WHERE email = $1', [user.email]);
+
+
+      if (checkResult.rowCount === 0) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
       const result = await pool.query('SELECT * FROM users');
-      res.json(result.rows);
+      res.json({
+        users: result.rows
+      });
     } catch (err) {
       console.error('JWT verification error:', err);
-      return res.status(403).json({ 
+      res.status(403).json({ 
         message: 'Authentication failed. Invalid token.'
       });
     }
   } catch (err) {
-    console.error('error:', err);
-    res.status(500).json({
-      message: 'Internal server error'
+    console.error('error', err);
+    res.status(403).json({
+      message: 'Authentication failed'
     });
   }
 });

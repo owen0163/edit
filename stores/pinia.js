@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
+
 export const useProductStore = defineStore('Product', {
   state: () => ({
     products: [],
@@ -52,5 +53,6 @@ export const useProductStore = defineStore('Product', {
         throw error;
       }
     },
+
   },
 });
