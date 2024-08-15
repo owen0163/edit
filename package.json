@@ -13,9 +13,11 @@
     "@mdi/font": "^7.4.47",
     "@pinia/nuxt": "^0.5.1",
     "axios": "^1.7.2",
+    "cookie-universal-nuxt": "^2.2.2",
     "nuxt": "^3.12.3",
     "pinia": "^2.1.7",
-    "vue": "latest"
+    "vue": "latest",
+    "vue3-cookies": "^1.0.6"
   },
   "devDependencies": {
     "vite-plugin-vuetify": "^2.0.3",

@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-col cols="13" md="6" lg="2" v-for="product in products.products" :key="product.id">
         <div>
-          <v-card>
+          <v-card class="mt-15">
 
             <v-img :height="250" :width="250" :src="product.image" cover></v-img>
             <v-card-title>
@@ -105,11 +105,19 @@
       </v-col>
     </v-row>
   </v-container>
+  <v-container>
+  <v-row>
+      <v-col>
+        <Header11></Header11>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useProductStore } from '~/stores/pinia';
+import Header11 from '../header11.vue';
 
 
 const valid = ref(true);

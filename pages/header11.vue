@@ -7,20 +7,14 @@
         >
           <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
   
-          <v-toolbar-title>Vendee</v-toolbar-title>
+          <v-toolbar-title >
+            <v-btn href="/">Vendee</v-btn></v-toolbar-title>
   
           <v-spacer></v-spacer>
   
           <template v-if="$vuetify.display.mdAndUp"  >
      
-      <v-text-field
-        v-model="search"
-        label="Search"
-        prepend-inner-icon="mdi-magnify"
-        variant="outlined"
-        hide-details
-        single-line
-      ></v-text-field>
+     
     </template>
         </v-app-bar>
   
@@ -30,21 +24,14 @@
           temporary
         >
           <v-list>
-            <v-list-item href="/">ຂໍ້ມູນສິນຄ້າ</v-list-item>
+            <v-list-item href="/products">ຂໍ້ມູນສິນຄ້າ</v-list-item>
             <v-list-item href="/add" >ເພີ້ມມູນສິນຄ້າ</v-list-item>
             <v-list-item href="/about" >ຈັດການຂໍ້ມູນສິນຄ້າ</v-list-item>
             
 
           </v-list>
         </v-navigation-drawer>
-  
-      
-        <v-main >
-        <v-card-text >
-          <slot />
-        </v-card-text>
-      </v-main>
-                  
+    
         
      
       </v-layout>

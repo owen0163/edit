@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 //..
 // nuxt.config.js
-
+plugins: [{ src: '~/plugins/cookie.js', mode: 'client' }],
 
   //...
   build: {
@@ -20,6 +20,7 @@ export default defineNuxtConfig({
       })
     },
      '@pinia/nuxt',
+   
     //...
   ],
   vite: {

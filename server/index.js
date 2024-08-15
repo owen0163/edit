@@ -178,6 +178,47 @@ app.post('/api/register', async (req, res) => {
 });
 ////////////////////////////////////////////////////////
 ////// login
+// app.post('/api/login', async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     // Query to fetch the user by email
+//     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+//     const user = result.rows[0];
+//     const match = await bcrypt.compare(password, user.password)
+
+//     if (!match) {
+//       res.status(400).json({
+//         message: 'login fail(wrong email, pass)'
+//        })
+//        return false
+//     }
+//     // If no user is found, return an error
+//     if (!user) {
+//       return res.status(401).json({ error: 'Invalid email or password' });
+//     }
+
+//     // Compare the provided password with the stored hashed password
+//     const isPasswordValid = await bcrypt.compare(password, user.password);
+
+//     // If the password is incorrect, return an error
+//     if (!isPasswordValid) {
+//       return res.status(401).json({ error: 'Invalid email or password' });
+//     }
+
+//     // Generate a JWT token
+//     const token = jwt.sign({ id: user.id, email: user.email}, 'your_jwt_secret', { expiresIn: '1h' });
+
+//     // Return the token to the client
+//     res.json({ 
+//       message: 'success ',token
+//      });
+//   } catch (error) {
+//     console.error('Error logging in user:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+/////////////////////////////////////////
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -185,14 +226,7 @@ app.post('/api/login', async (req, res) => {
     // Query to fetch the user by email
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
-    const match = await bcrypt.compare(password, user.password)
 
-    if (!match) {
-      res.status(400).json({
-        message: 'login fail(wrong email, pass)'
-       })
-       return false
-    }
     // If no user is found, return an error
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' });
@@ -207,12 +241,13 @@ app.post('/api/login', async (req, res) => {
     }
 
     // Generate a JWT token
-    const token = jwt.sign({ id: user.id, email: user.email}, 'your_jwt_secret', { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
 
     // Return the token to the client
-    res.json({ 
-      message: 'success ',token
-     });
+    res.json({
+      message: 'Login successful',
+      token,
+    });
   } catch (error) {
     console.error('Error logging in user:', error);
     res.status(500).json({ error: 'Internal Server Error' });

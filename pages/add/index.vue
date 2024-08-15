@@ -1,8 +1,15 @@
 <template>
     <v-container>
+  <v-row>
+      <v-col>
+        <Header11></Header11>
+      </v-col>
+    </v-row>
+  </v-container>
+    <v-container>
         <v-row justify="center">
-            <v-col cols="12" md="8">
-                <v-card class="text-center">
+            <v-col cols="12" md="8" >
+                <v-card class="text-center mt-6">
                     <v-card-title class="text-h5">Add Product</v-card-title>
                     <v-card-text >
                         <v-form v-model="valid" ref="form" @submit.prevent="submitForm" >
@@ -32,12 +39,14 @@
             </v-col>
         </v-row>
     </v-container>
+
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useProductStore } from '~/stores/pinia';
+import Header11 from '../header11.vue';
 
 const productStore = useProductStore();
 const router = useRouter();
