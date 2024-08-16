@@ -254,6 +254,48 @@ app.post('/api/login', async (req, res) => {
   }
 });
 ////////////////////////////////////
+// app.get('/users', async (req, res) => {
+//   try {
+//     const authHeader = req.headers['authorization'];
+//     let authToken = '';
+
+//     if (authHeader) {
+//       authToken = authHeader.split(' ')[1];
+//     }
+
+//     console.log("authToken", authToken);
+
+//     try {
+//       const user = jwt.verify(authToken, 'your_jwt_secret'); 
+//       console.log('user', user);
+
+//       const checkResult = await pool.query('SELECT * FROM users WHERE email = $1', [user.email]);
+
+
+//       if (checkResult.rowCount === 0) {
+//         return res.status(404).json({ message: 'User not found' });
+//       }
+  
+//       const result = await pool.query('SELECT * FROM users');
+//       res.json({
+//         users: result.rows
+//       });
+//     } catch (err) {
+//       console.error('JWT verification error:', err);
+//       res.status(403).json({ 
+//         message: 'Authentication failed. Invalid token.'
+//       });
+//     }
+//   } catch (err) {
+//     console.error('error', err);
+//     res.status(403).json({
+//       message: 'Authentication failed'
+//     });
+//   }
+// });
+
+// module.exports = app;
+//////////////////////////////////////////////////////////////////
 app.get('/users', async (req, res) => {
   try {
     const authHeader = req.headers['authorization'];
@@ -261,6 +303,8 @@ app.get('/users', async (req, res) => {
 
     if (authHeader) {
       authToken = authHeader.split(' ')[1];
+    } else {
+      return res.status(401).json({ message: 'Authorization header missing' });
     }
 
     console.log("authToken", authToken);
@@ -269,16 +313,16 @@ app.get('/users', async (req, res) => {
       const user = jwt.verify(authToken, 'your_jwt_secret'); 
       console.log('user', user);
 
+      // Check if the user exists in the database
       const checkResult = await pool.query('SELECT * FROM users WHERE email = $1', [user.email]);
-
 
       if (checkResult.rowCount === 0) {
         return res.status(404).json({ message: 'User not found' });
       }
-  
-      const result = await pool.query('SELECT * FROM users');
+
+      // Return the user's own details
       res.json({
-        users: result.rows
+        user: checkResult.rows[0]
       });
     } catch (err) {
       console.error('JWT verification error:', err);
