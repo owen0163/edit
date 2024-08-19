@@ -4661,6 +4661,11 @@ vue-bundle-renderer@^2.1.0:
   dependencies:
     ufo "^1.5.3"
 
+vue-cookies@^1.8.4:
+  version "1.8.4"
+  resolved "https://registry.npmjs.org/vue-cookies/-/vue-cookies-1.8.4.tgz"
+  integrity sha512-9zjvACKE4W0kEb8OQtXzpizKhf6zfFOG/Z1TEUjSJn4Z4rintuAHo8y/FpCUhTWHMmPe8E+Fko+/tiXVM+5jOw==
+
 vue-demi@>=0.14.5:
   version "0.14.8"
   resolved "https://registry.npmjs.org/vue-demi/-/vue-demi-0.14.8.tgz"

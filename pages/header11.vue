@@ -23,26 +23,20 @@
 
               <v-list>
                 <v-list-item>
-
-                </v-list-item>
-
-                <v-list-item>
-
+                  <!-- Additional menu items can be added here -->
                 </v-list-item>
               </v-list>
 
               <v-card-actions>
                 <v-col class="text-center">
-                <v-btn color="primary" variant="text" @click="handleLogout">
-                 Logout
-                </v-btn>
-              </v-col>
+                  <v-btn color="primary" variant="text" @click="handleLogout">
+                    Logout
+                  </v-btn>
+                </v-col>
               </v-card-actions>
             </v-card>
           </v-menu>
         </div>
-        <template v-if="$vuetify.display.mdAndUp">
-        </template>
       </v-app-bar>
 
       <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'bottom' : undefined" temporary>
@@ -50,39 +44,42 @@
           <v-list-item href="/products">ຂໍ້ມູນສິນຄ້າ</v-list-item>
           <v-list-item href="/add">ເພີ້ມມູນສິນຄ້າ</v-list-item>
           <v-list-item href="/about">ຈັດການຂໍ້ມູນສິນຄ້າ</v-list-item>
-
-
         </v-list>
-
-
-
       </v-navigation-drawer>
     </v-layout>
   </v-card>
-
 </template>
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '~/stores/auth';
+import { useRouter } from 'vue-router'; // Ensure this is imported
+import VueCookies from 'vue-cookies'; // Import vue-cookies
 
+const token = ref(null);
 const authStore = useAuthStore();
+const router = useRouter(); // Initialize router
 const menu = ref(false);
 const drawer = ref(false);
 
 onMounted(async () => {
   try {
     await authStore.fetchUser();
+    token.value = VueCookies.get('token');
+  console.log('Token from cookies:', token.value);
   } catch (error) {
     console.error('Failed to fetch user:', error);
   }
 });
 
-
-const handleLogout = () => {
-  authStore.logout();
-  menu.value = false; // Close the menu on logout
-      router.push('/');
-
+const handleLogout = async () => {
+  try {
+    await authStore.logout();
+    menu.value = false; // Close the menu on logout
+    router.push('/');  // Redirect to home or login page
+  } catch (error) {
+    console.error('Logout failed:', error);
+  }
 };
 </script>
 <script>

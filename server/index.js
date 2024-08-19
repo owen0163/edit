@@ -17,6 +17,7 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Start server
 const PORT = 3300;
@@ -184,15 +185,7 @@ app.post('/api/register', async (req, res) => {
 
 //     // Query to fetch the user by email
 //     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-//     const user = result.rows[0];
-//     const match = await bcrypt.compare(password, user.password)
-
-//     if (!match) {
-//       res.status(400).json({
-//         message: 'login fail(wrong email, pass)'
-//        })
-//        return false
-//     }
+//     const user = result.rows[0]:
 //     // If no user is found, return an error
 //     if (!user) {
 //       return res.status(401).json({ error: 'Invalid email or password' });
@@ -207,18 +200,39 @@ app.post('/api/register', async (req, res) => {
 //     }
 
 //     // Generate a JWT token
-//     const token = jwt.sign({ id: user.id, email: user.email}, 'your_jwt_secret', { expiresIn: '1h' });
+//     const token = jwt.sign({ id: user.id, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
 
 //     // Return the token to the client
-//     res.json({ 
-//       message: 'success ',token
-//      });
+//     res.json({
+//       message: 'Login successful',
+//       token,
+//     });
 //   } catch (error) {
 //     console.error('Error logging in user:', error);
 //     res.status(500).json({ error: 'Internal Server Error' });
 //   }
 // });
 /////////////////////////////////////////
+
+
+// Function to generate a JWT
+function generateJwtToken(user) {
+  // Define the payload you want to include in the token
+  const payload = {
+    email: user.email,
+    name: user.name,
+    // You can include any other user-related data here
+  };
+
+  // Generate the token using a secret key
+  const token = jwt.sign(payload, 'your_jwt_secret', {
+    expiresIn: '1h', // Token expiration time, e.g., 1 hour
+  });
+
+  return token;
+}
+///////////////////////////////////////////
+
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -241,13 +255,18 @@ app.post('/api/login', async (req, res) => {
     }
 
     // Generate a JWT token
-    const token = jwt.sign({ id: user.id, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
-
+    //const token = jwt.sign({ id: user.id, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
+    const token = generateJwtToken(user);
     // Return the token to the client
-    res.json({
-      message: 'Login successful',
-      token,
-    });
+    res.cookie("token", token, {
+
+      maxAge:300000,  
+      secure:true,    
+      httpOnly:true,
+      secure: process.env.NODE_ENV === 'production', // Ensure cookies are sent over HTTPS in production
+    sameSite: 'strict', 
+      });
+      res.send({ message:"Login successful" });
   } catch (error) {
     console.error('Error logging in user:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -261,24 +280,26 @@ app.post('/api/login', async (req, res) => {
 
 //     if (authHeader) {
 //       authToken = authHeader.split(' ')[1];
+//     } else {
+//       return res.status(401).json({ message: 'Authorization header missing' });
 //     }
-
+ 
 //     console.log("authToken", authToken);
 
 //     try {
 //       const user = jwt.verify(authToken, 'your_jwt_secret'); 
 //       console.log('user', user);
 
+//       // Check if the user exists in the database
 //       const checkResult = await pool.query('SELECT * FROM users WHERE email = $1', [user.email]);
-
 
 //       if (checkResult.rowCount === 0) {
 //         return res.status(404).json({ message: 'User not found' });
 //       }
-  
-//       const result = await pool.query('SELECT * FROM users');
+
+//       // Return the user's own details
 //       res.json({
-//         users: result.rows
+//         user: checkResult.rows[0]
 //       });
 //     } catch (err) {
 //       console.error('JWT verification error:', err);
@@ -297,20 +318,25 @@ app.post('/api/login', async (req, res) => {
 // module.exports = app;
 //////////////////////////////////////////////////////////////////
 app.get('/users', async (req, res) => {
-  try {
-    const authHeader = req.headers['authorization'];
-    let authToken = '';
+  console.log('Cookies:', req.cookies); // Log cookies
+  console.log('Headers:', req.headers); // Log headers
 
-    if (authHeader) {
-      authToken = authHeader.split(' ')[1];
-    } else {
-      return res.status(401).json({ message: 'Authorization header missing' });
+  try {
+    if (!req.cookies || !req.cookies.token) {
+      return res.status(403).json({ message: 'No cookies found' });
+    }
+
+
+    const authToken = req.cookies.token;
+
+    if (!authToken) {
+      return res.status(403).json({ message: 'Token not found in cookies' });
     }
 
     console.log("authToken", authToken);
 
     try {
-      const user = jwt.verify(authToken, 'your_jwt_secret'); 
+      const user = jwt.verify(authToken, 'your_jwt_secret');
       console.log('user', user);
 
       // Check if the user exists in the database
@@ -326,7 +352,7 @@ app.get('/users', async (req, res) => {
       });
     } catch (err) {
       console.error('JWT verification error:', err);
-      res.status(403).json({ 
+      res.status(403).json({
         message: 'Authentication failed. Invalid token.'
       });
     }
