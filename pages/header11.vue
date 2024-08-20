@@ -15,15 +15,18 @@
               </v-btn>
             </template>
             <v-card min-width="300">
-              <v-list>
-                <v-list-item :title="authStore.user?.email" subtitle="Email"></v-list-item>
-                <v-list-item :title="authStore.user?.name" subtitle="Name"></v-list-item>
+              <v-list v-if="user">
+              
+                <v-list-item :title="user.email" subtitle="Email">{{ user.name }}</v-list-item>
+                <v-list-item :title="user.name" subtitle="Name"></v-list-item>
+               
               </v-list>
               <v-divider></v-divider>
 
               <v-list>
                 <v-list-item>
-                  <!-- Additional menu items can be added here -->
+                  
+
                 </v-list-item>
               </v-list>
 
@@ -57,19 +60,27 @@ import { useRouter } from 'vue-router'; // Ensure this is imported
 import VueCookies from 'vue-cookies'; // Import vue-cookies
 
 const token = ref(null);
+const user = ref({ email: '', name: '' });
 const authStore = useAuthStore();
 const router = useRouter(); // Initialize router
 const menu = ref(false);
 const drawer = ref(false);
 
 onMounted(async () => {
-  try {
-    await authStore.fetchUser();
-    token.value = VueCookies.get('token');
-  console.log('Token from cookies:', token.value);
-  } catch (error) {
-    console.error('Failed to fetch user:', error);
+//   try {
+//     await authStore.fetchUser();
+//     token.value = VueCookies.get('token');
+//   console.log('Token from cookies:', token.value);
+//   } catch (error) {
+//     console.error('Failed to fetch user:', error);
+//   }
+// });
+const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+  if (token) {
+    userStore.setToken(token);
+    userStore.fetchUser();
   }
+  const user = computed(() => userStore.user);
 });
 
 const handleLogout = async () => {
@@ -87,12 +98,9 @@ export default {
   data: () => ({
     drawer: false,
     group: null,
-    search: '',
-
-    fav: true,
     menu: false,
     message: false,
-    hints: true,
+
   }),
 
   watch: {

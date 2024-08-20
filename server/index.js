@@ -244,7 +244,7 @@ app.post('/api/login', async (req, res) => {
     // If no user is found, return an error
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' });
-    }
+    } 
 
     // Compare the provided password with the stored hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -254,7 +254,7 @@ app.post('/api/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Generate a JWT token
+    // Generate a JWT token    
     //const token = jwt.sign({ id: user.id, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
     const token = generateJwtToken(user);
     // Return the token to the client

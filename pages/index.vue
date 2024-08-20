@@ -8,22 +8,10 @@
               <div class="text-center text-h4">Login</div>
             </v-card-title>
             <v-form v-model="formValid" ref="form">
-              <v-text-field
-                class="mr-2 ml-2"
-                v-model="email"
-                :rules="emailRules"
-                label="Email"
-                required
-                type="email"
-              ></v-text-field>
-              <v-text-field
-                class="mr-2 ml-2"
-                v-model="password"
-                :rules="passwordRules"
-                label="Password"
-                type="password"
-                required
-              ></v-text-field>
+              <v-text-field class="mr-2 ml-2" v-model="email" :rules="emailRules" label="Email" required
+                type="email"></v-text-field>
+              <v-text-field class="mr-2 ml-2" v-model="password" :rules="passwordRules" label="Password" type="password"
+                required></v-text-field>
               <v-col class="text-center">
                 <v-btn @click="submitForm" :disabled="!formValid" color="primary">
                   Login

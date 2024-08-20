@@ -20,9 +20,13 @@ plugins: [{ src: '~/plugins/cookie.js', mode: 'client' }],
       })
     },
      '@pinia/nuxt',
-   
-    //...
   ],
+
+  runtimeConfig: {
+    public: {
+      jwtSecret: process.env.JWT_SECRET || 'your_jwt_secret',
+    },
+  },
   vite: {
     vue: {
       template: {

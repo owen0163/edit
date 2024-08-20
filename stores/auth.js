@@ -6,6 +6,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: null,
     user: null,
+    authToken: null,
   }),
   actions: {
     // async login(email, password) {
@@ -57,51 +58,55 @@ export const useAuthStore = defineStore('auth', {
     },
     // async fetchUser() {
     //   try {
-    //     // Retrieve token from cookies
+    //     // Access cookies using useNuxtApp
     //     const { $cookies } = useNuxtApp();
+        
+    //     // Retrieve token from cookies
     //     this.token = $cookies.get('token');
-
+    
+    //     // Check if the token is available
     //     if (!this.token) {
     //       throw new Error('Token is not available in cookies');
     //     }
-
+    
+    //     // Make a GET request to fetch the user data
     //     const response = await axios.get('http://localhost:3300/api/users', {
     //       headers: {
     //         Authorization: `Bearer ${this.token}`,
     //       },
     //     });
+    
+    //     // Store the fetched user data in your component's data or state
     //     this.user = {
     //       email: response.data.email,
     //       name: response.data.name,
     //     };
+    
     //   } catch (error) {
+    //     // Handle any errors that occur during the fetch process
     //     console.error('Fetching user failed:', error);
     //     throw error;
     //   }
     // },
     async fetchUser() {
       try {
-        const { $cookies } = useNuxtApp();
-        this.token = $cookies.get('token');
-    
-        if (!this.token) {
-          throw new Error('Token is not available in cookies');
-        }
-    
-        const response = await axios.get('http://localhost:3300/api/users', {
+        const { data, error } = await useFetch('/users', {
           headers: {
-            Authorization: `Bearer ${this.token}`,
+            'Authorization': `Bearer ${this.authToken}`
           },
         });
-    
-        this.user = {
-          email: response.data.email,
-          name: response.data.name,
-        };
-      } catch (error) {
-        console.error('Fetching user failed:', error);
-        throw error;
+
+        if (error) {
+          throw new Error(error);
+        }
+
+        this.user = data.value.user;
+      } catch (err) {
+        console.error('Failed to fetch user:', err);
       }
+    },
+    setToken(token) {
+      this.authToken = token;
     },
     logout() {
       const { $cookies } = useNuxtApp();
