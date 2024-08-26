@@ -105,19 +105,19 @@ export const useAuthStore = defineStore('auth', {
   //       console.error('Failed to fetch user:', err);
   //     }
   //   },
-  //   setToken(token) {
-  //     this.authToken = token;
-  //   },
-  //   logout() {
-  //     const { $cookies } = useNuxtApp();
-  //     $cookies.remove('token', { path: '/' });
-  //     this.token = null;
-  //     this.user = null;
-  //   },
-  //   loadTokenFromCookies() {
-  //     const { $cookies } = useNuxtApp();
-  //     this.token = $cookies.get('token');
-  //   },
+    setToken(token) {
+      this.authToken = token;
+    },
+    logout() {
+      const { $cookies } = useNuxtApp();
+      $cookies.remove('token', { path: '/' });
+      this.token = null;
+      this.user = null;
+    },
+    loadTokenFromCookies() {
+      const { $cookies } = useNuxtApp();
+      this.token = $cookies.get('token');
+    },
   },
 });
 
