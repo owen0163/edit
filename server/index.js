@@ -12,8 +12,11 @@ const bcrypt = require('bcrypt');
 const app = express();
 
 // Middleware
-
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:3000', // Your frontend origin
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -255,17 +258,18 @@ app.post('/api/login', async (req, res) => {
     }
 
     // Generate a JWT token    
-    //const token = jwt.sign({ id: user.id, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
+ 
     const token = generateJwtToken(user);
-    // Return the token to the client
-    res.cookie("token", token, {
+    // Set the token in a cookie
+    res.cookie('token', token, {
+      maxAge: 300000,  
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
+      path: '/',
+    });
 
-      maxAge:300000,  
-      secure:true,    
-      httpOnly:true,
-      secure: process.env.NODE_ENV === 'production', // Ensure cookies are sent over HTTPS in production
-    sameSite: 'strict', 
-      });
+
       res.send({ message:"Login successful" });
   } catch (error) {
     console.error('Error logging in user:', error);
@@ -365,3 +369,11 @@ app.get('/users', async (req, res) => {
 });
 
 module.exports = app;
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // Allow your frontend origin
+  res.header('Access-Control-Allow-Credentials', 'true'); // Allow credentials to be sent
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});

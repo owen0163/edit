@@ -58,7 +58,7 @@
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '~/stores/auth';
 import { useRouter } from 'vue-router'; // Ensure this is imported
-import VueCookies from 'vue-cookies'; // Import vue-cookies
+
 
 const token = ref(null);
 const user = ref({ email: '', name: '' });
@@ -68,20 +68,18 @@ const menu = ref(false);
 const drawer = ref(false);
 
 onMounted(async () => {
-//   try {
-//     await authStore.fetchUser();
-//     token.value = VueCookies.get('token');
-//   console.log('Token from cookies:', token.value);
-//   } catch (error) {
-//     console.error('Failed to fetch user:', error);
-//   }
-// });
-const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
-  if (token) {
-    userStore.setToken(token);
-    userStore.fetchUser();
+
+  console.log('Current cookies:', document.cookie); // This should print out all the cookies
+
+  const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('token='));
+  if (tokenCookie) {
+    const tokenValue = tokenCookie.split('=')[1];
+    console.log('Token found:', tokenValue);
+    authStore.setToken(tokenValue);
+    await authStore.fetchUser();
+  } else {
+    console.error('Token not found in cookies');
   }
-  const user = computed(() => userStore.user);
 });
 
 const handleLogout = async () => {
