@@ -232,7 +232,7 @@ function generateJwtToken(user) {
     expiresIn: '1h', // Token expiration time, e.g., 1 hour
   });
 
-  return token;
+  return { token, payload }; // Return both token and payload
 }
 ///////////////////////////////////////////
 
@@ -258,10 +258,10 @@ app.post('/api/login', async (req, res) => {
     }
 
     // Generate a JWT token    
- 
-    const token = generateJwtToken(user);
+    const { token, payload } = generateJwtToken(user);
     // Set the token in a cookie
-    res.cookie('token', token, {
+    res.cookie('token', token, { 
+
       maxAge: 300000,  
       httpOnly: true, 
       secure: process.env.NODE_ENV === 'production',
@@ -270,7 +270,7 @@ app.post('/api/login', async (req, res) => {
     });
 
 
-      res.send({ message:"Login successful" });
+      res.send({ message:"Login successful", user:payload });
   } catch (error) {
     console.error('Error logging in user:', error);
     res.status(500).json({ error: 'Internal Server Error' });

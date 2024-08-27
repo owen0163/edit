@@ -39,53 +39,30 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     async fetchUser() {
+      if (!this.token) {
+        throw new Error('Token is not available');
+      }
+
       try {
-        // const { $cookies } = useNuxtApp();
-        const nuxtApp = useNuxtApp();
-        const $cookies = nuxtApp.$cookies;
-        this.token = $cookies.get('token');
-        console.log('Token from client cookies:', this.token);
-        // Check if the token is available
-        if (!this.token) {
-          throw new Error('Token is not available in cookies');
-        }
-    
-        // Debugging output
-        console.log('Fetched token from cookies:', this.token); // Debugging
-     
-        // Make a GET request to fetch the user data
         const response = await axios.get('http://localhost:3300/api/users', {
           headers: { 'Authorization': `Bearer ${this.token}` },
           withCredentials: true,
         });
-    
-        // Store the fetched user data in your component's data or state
-        this.user = {
-          email: response.data.email,
-          name: response.data.name,
-        };
-    
+
+        this.user = response.data;
       } catch (error) {
-        console.error('Fetching user failed:', error);
-        throw error;
+        console.error('Error fetching user:', error);
       }
     },
+
     setToken(token) {
-      this.authToken = token;
       this.token = token;
     },
     logout() {
-      // const { $cookies } = useNuxtApp();
-      const nuxtApp = useNuxtApp();
-      const $cookies = nuxtApp.$cookies;
+      const { $cookies } = useNuxtApp();
       $cookies.remove('token', { path: '/' });
       this.token = null;
       this.user = null;
     },
-    // loadTokenFromCookies() {
-    //   const { $cookies } = useNuxtApp();
-    //   this.token = $cookies.get('token');
-    //   console.log('Loaded token:', this.token);
-    // },
   },
 });

@@ -16,7 +16,6 @@
             </template>
             <v-card min-width="300">
               <v-list v-if="user">
-              
                 <v-list-item :title="user.email" subtitle="Email">{{ user.name }}</v-list-item>
                 <v-list-item :title="user.name" subtitle="Name"></v-list-item>
                
@@ -58,7 +57,7 @@
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '~/stores/auth';
 import { useRouter } from 'vue-router'; // Ensure this is imported
-
+import VueCookies from 'vue-cookies';
 
 const token = ref(null);
 const user = ref({ email: '', name: '' });
@@ -68,21 +67,15 @@ const menu = ref(false);
 const drawer = ref(false);
 
 onMounted(async () => {
-  const nuxtApp = useNuxtApp();
-  const $cookies = nuxtApp.$cookies;  // Correctly access $cookies
-  
-  console.log('$cookies:', $cookies);
-  console.log('Current cookies:', document.cookie);
+ // Extract the token from the cookie
+ const tokenValue = VueCookies.get('token');
 
-  const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('token='));
-  if (tokenCookie) {
-    const tokenValue = tokenCookie.split('=')[1];
-    console.log('Token found:', tokenValue);
-    authStore.setToken(tokenValue);
-    await authStore.fetchUser();
-  } else {
-    console.error('Token not found in cookies');
-  }
+if (tokenValue) {
+  authStore.setToken(tokenValue);  // Store the token in your auth store
+  authStore.fetchUser();           // Fetch user data with the token
+} else {
+  console.error('Token not found in cookies');
+}
 });
 
 const handleLogout = async () => {

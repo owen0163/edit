@@ -27,9 +27,7 @@ plugins: [{ src: '~/plugins/cookie.js', mode: 'client' }],
     },
   },
   vite: {
-    ssr: {
-      noExternal: ['jspdf']
-    },
+ 
     vue: {
       template: {
         transformAssetUrls,
