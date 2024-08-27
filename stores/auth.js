@@ -20,10 +20,13 @@ export const useAuthStore = defineStore('auth', {
     
         this.token = response.data.token;
     
-        const { $cookies } = useNuxtApp();
+        // const { $cookies } = useNuxtApp();
+        const nuxtApp = useNuxtApp();  // Access Nuxt app instance
+        const $cookies = nuxtApp.$cookies;
     
         if ($cookies) {
-          $cookies.set('token', this.token, { path: '/' });
+          // $cookies.set('token', this.token, { path: '/' });
+          $cookies.set('token', this.token, { path: '/', expires: new Date(Date.now() + 1000 * 60 * 60 * 24) });
           console.log('Token set in cookies:', this.token); // Debugging
         } else {
           throw new Error('Cookies are not available');
@@ -37,9 +40,11 @@ export const useAuthStore = defineStore('auth', {
     },
     async fetchUser() {
       try {
-        const { $cookies } = useNuxtApp();
+        // const { $cookies } = useNuxtApp();
+        const nuxtApp = useNuxtApp();
+        const $cookies = nuxtApp.$cookies;
         this.token = $cookies.get('token');
-    
+        console.log('Token from client cookies:', this.token);
         // Check if the token is available
         if (!this.token) {
           throw new Error('Token is not available in cookies');
@@ -70,7 +75,9 @@ export const useAuthStore = defineStore('auth', {
       this.token = token;
     },
     logout() {
-      const { $cookies } = useNuxtApp();
+      // const { $cookies } = useNuxtApp();
+      const nuxtApp = useNuxtApp();
+      const $cookies = nuxtApp.$cookies;
       $cookies.remove('token', { path: '/' });
       this.token = null;
       this.user = null;

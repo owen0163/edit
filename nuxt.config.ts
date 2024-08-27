@@ -7,7 +7,6 @@ export default defineNuxtConfig({
 //..
 // nuxt.config.js
 plugins: [{ src: '~/plugins/cookie.js', mode: 'client' }],
-
   //...
   build: {
     transpile: ['vuetify'],
@@ -28,10 +27,14 @@ plugins: [{ src: '~/plugins/cookie.js', mode: 'client' }],
     },
   },
   vite: {
+    ssr: {
+      noExternal: ['jspdf']
+    },
     vue: {
       template: {
         transformAssetUrls,
       },
+     
     },
   },
 })

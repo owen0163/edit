@@ -68,8 +68,11 @@ const menu = ref(false);
 const drawer = ref(false);
 
 onMounted(async () => {
-
-  console.log('Current cookies:', document.cookie); // This should print out all the cookies
+  const nuxtApp = useNuxtApp();
+  const $cookies = nuxtApp.$cookies;  // Correctly access $cookies
+  
+  console.log('$cookies:', $cookies);
+  console.log('Current cookies:', document.cookie);
 
   const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('token='));
   if (tokenCookie) {

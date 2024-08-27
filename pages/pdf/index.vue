@@ -3,7 +3,7 @@
       <v-card outlined class="mt-15">
         <div ref="billContent">
           <v-card-title>Vendee</v-card-title>
-          <v-card-subtitle>user: {{ user?.name || 'Unknown' }}</v-card-subtitle>
+          <v-card-subtitle>user:  {{ user ? user.name : 'Guest' }}</v-card-subtitle>
           <v-card-subtitle>Date: {{ currentDateTime  }}</v-card-subtitle>
   
           <v-card-text>
@@ -51,6 +51,56 @@
   </v-container>
   </template>
   <script setup>
+  import { ref, computed, onMounted } from 'vue';
+  import { useProductStore } from '~/stores/pinia';
+  import Header11 from '../header11.vue';
+  import { useAuthStore } from '~/stores/auth';
+  
+  const authStore = useAuthStore();
+  const products = useProductStore();
+  const billContent = ref(null);
+  const user = computed(() => authStore.user);
+  const currentDateTime = ref(new Date().toLocaleString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }));
+  
+  const totalAmount = computed(() =>
+    products.products.reduce((total, product) => total + (product.stock * product.currentprice), 0)
+  );
+  
+  onMounted(async () => {
+    await products.fetchProducts();
+  });
+  
+  // Default generatePDF to a no-op function
+let generatePDF = () => {};
+  if (process.client) {
+    const generatePDF = async () => {
+      // Dynamically import jspdf and html2canvas
+      const jsPDF = (await import('jspdf')).default;
+      const html2canvas = (await import('html2canvas')).default;
+  
+      const element = billContent.value;
+  
+      html2canvas(element).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 210; // A4 width in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save('bill.pdf');
+      });
+    };
+  }
+  </script>
+  <!-- <script setup>
 import { ref, computed, onMounted } from 'vue';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -61,10 +111,10 @@ import { useAuthStore } from '~/stores/auth';
   const authStore = useAuthStore();
   const products = useProductStore();
   const billContent = ref(null);
-  const user = computed(() => authStore.user);
+
   onMounted(async () => {
   await products.fetchProducts();
-  await authStore.fetchUser();
+  
 });
 const totalAmount = computed(() =>
   products.products.reduce((total, product) => total + (product.stock * product.currentprice), 0)
@@ -92,7 +142,7 @@ const currentDateTime = ref(new Date().toLocaleString('en-US', {
       pdf.save('bill.pdf');
     });
   };
-  </script>
+  </script> -->
   
   <style scoped>
   .bill-container {
