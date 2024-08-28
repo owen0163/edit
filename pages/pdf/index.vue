@@ -3,15 +3,15 @@
     <v-card outlined class="mt-15">
       <div ref="billContent">
         <v-card-title>Vendee</v-card-title>
-        <v-card-subtitle>user: {{ user?.name || 'Unknown' }}</v-card-subtitle>
-        <v-card-subtitle>Date: {{ currentDateTime  }}</v-card-subtitle>
+        <v-card-subtitle>User: {{ user?.name || 'Unknown' }}</v-card-subtitle>
+        <v-card-subtitle>Date: {{ currentDateTime }}</v-card-subtitle>
 
         <v-card-text>
           <v-table>
             <thead>
               <tr>
                 <th>Item</th>
-                <th>image</th>
+                <th>Image</th>
                 <th>Quantity</th>
                 <th>Price</th>
                 <th>Amount</th>
@@ -19,9 +19,10 @@
             </thead>
             <tbody>
               <tr v-for="product in products.products" :key="product.id">
-                  
                 <td>{{ product.name }}</td>
-                <td><img :src="product.image" alt="Product Image" style="width: 50px; height: 50px; object-fit: cover;"></td>
+                <td>
+                  <img :src="product.image" alt="Product Image" style="width: 50px; height: 50px; object-fit: cover;">
+                </td>
                 <td>{{ product.stock }}</td>
                 <td>{{ product.currentprice }}</td>
                 <td>{{ product.stock * product.currentprice }}</td>
@@ -42,43 +43,55 @@
       <v-btn variant="flat" color="primary" @click="generatePDF">Download PDF</v-btn>
     </v-card-actions>
   </v-container>
+
   <v-container>
-<v-row>
-    <v-col>
-    <Header11></Header11>
-    </v-col>
-  </v-row>
-</v-container>
+    <v-row>
+      <v-col>
+        <Header11></Header11>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useProductStore } from '~/stores/pinia';
-import Header11 from '../header11.vue';
-import { useAuthStore } from '~/stores/auth';
 
-const authStore = useAuthStore();
+import Header11 from '../header11.vue';
+import VueCookies from 'vue-cookies';
+
 const products = useProductStore();
 const billContent = ref(null);
-const user = computed(() => authStore.user);
+const user = ref({ email: '', name: '' });
+
+
 onMounted(async () => {
-await products.fetchProducts();
-await authStore.fetchUser();
+  await products.fetchProducts();
+  const userData = VueCookies.get('user');
+  if (userData) {
+    console.log('Raw userData from cookie:', userData);
+    user.value = userData;
+  } else {
+    console.error('User data not found in cookies');
+  }
 });
+
 const totalAmount = computed(() =>
-products.products.reduce((total, product) => total + (product.stock * product.currentprice), 0)
+  products.products.reduce((total, product) => total + (product.stock * product.currentprice), 0)
 );
-// Automatically generated current date and time
+
 const currentDateTime = ref(new Date().toLocaleString('en-US', {
-year: 'numeric',
-month: '2-digit',
-day: '2-digit',
-hour: '2-digit',
-minute: '2-digit',
-second: '2-digit',
-hour12: false
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false,
 }));
+
 const generatePDF = () => {
   const element = billContent.value;
 

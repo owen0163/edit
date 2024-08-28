@@ -258,19 +258,26 @@ app.post('/api/login', async (req, res) => {
     }
 
     // Generate a JWT token    
-    const { token, payload } = generateJwtToken(user);
+    const { token,  } = generateJwtToken(user);
     // Set the token in a cookie
     res.cookie('token', token, { 
-
-      maxAge: 300000,  
-      httpOnly: true, 
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
-      path: '/',
+      // maxAge: 300000,  
+      // httpOnly: true, 
+      // secure: process.env.NODE_ENV === 'production',
+      // sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
+      // path: '/',
+      maxAge: 3600000,
+      httpOnly: true,
+      secure: true,
+      sameSite : "none"
     });
-
-
-      res.send({ message:"Login successful", user:payload });
+     // Ensure user data is properly stringified
+     res.cookie('user', JSON.stringify({ email: user.email, name: user.name }), {
+      maxAge: 3600000, // 1 hour
+      secure: true,
+      sameSite: 'none',
+    });
+      res.send({ message:"Login successful", user: { email: user.email, name: user.name } });
   } catch (error) {
     console.error('Error logging in user:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -322,15 +329,10 @@ app.post('/api/login', async (req, res) => {
 // module.exports = app;
 //////////////////////////////////////////////////////////////////
 app.get('/users', async (req, res) => {
-  console.log('Cookies:', req.cookies); // Log cookies
-  console.log('Headers:', req.headers); // Log headers
-
   try {
-    if (!req.cookies || !req.cookies.token) {
-      return res.status(403).json({ message: 'No cookies found' });
-    }
-
-
+    // if (!req.cookies || !req.cookies.token) {
+    //   return res.status(403).json({ message: 'No cookies found' });
+    // }
     const authToken = req.cookies.token;
 
     if (!authToken) {

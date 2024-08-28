@@ -4,7 +4,7 @@
       <v-app-bar color="orange-darken-3" prominent>
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title>
-          <v-btn href="/">Vendee</v-btn>
+          <v-btn href="/products">Vendee</v-btn>
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <div class="text-center">
@@ -16,9 +16,12 @@
             </template>
             <v-card min-width="300">
               <v-list v-if="user">
-                <v-list-item :title="user.email" subtitle="Email">{{ user.name }}</v-list-item>
-                <v-list-item :title="user.name" subtitle="Name"></v-list-item>
-               
+                <v-list-item>
+                  <v-list-item-title>Email: {{ user.email }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-title>Name: {{ user.name }}</v-list-item-title>
+                </v-list-item>
               </v-list>
               <v-divider></v-divider>
 
@@ -67,21 +70,21 @@ const menu = ref(false);
 const drawer = ref(false);
 
 onMounted(async () => {
- // Extract the token from the cookie
- const tokenValue = VueCookies.get('token');
-
-if (tokenValue) {
-  authStore.setToken(tokenValue);  // Store the token in your auth store
-  authStore.fetchUser();           // Fetch user data with the token
-} else {
-  console.error('Token not found in cookies');
-}
+  const userData = VueCookies.get('user');
+  if (userData) {
+    console.log('Raw userData from cookie:', userData);
+    user.value = userData;
+  } else {
+    console.error('User data not found in cookies');
+  }
 });
 
 const handleLogout = async () => {
   try {
     await authStore.logout();
     menu.value = false; // Close the menu on logout
+    VueCookies.remove('token', { path: '/' });
+    VueCookies.remove('user', { path: '/' });
     router.push('/');  // Redirect to home or login page
   } catch (error) {
     console.error('Logout failed:', error);

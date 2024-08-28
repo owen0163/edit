@@ -39,17 +39,13 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     async fetchUser() {
-      if (!this.token) {
-        throw new Error('Token is not available');
-      }
-
       try {
         const response = await axios.get('http://localhost:3300/api/users', {
-          headers: { 'Authorization': `Bearer ${this.token}` },
+          // headers: { 'Authorization': `Bearer ${this.token}` },
           withCredentials: true,
         });
-
-        this.user = response.data;
+          console.log('user data', response.data)
+        // this.user = response.data;
       } catch (error) {
         console.error('Error fetching user:', error);
       }
