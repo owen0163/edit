@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axios from 'axios';
+import { ref  } from 'vue';
 
 
 export const usePdf = defineStore('usePdf', () =>{
@@ -12,6 +12,7 @@ export const usePdf = defineStore('usePdf', () =>{
             stock
         }
             pdf.value.push(data)
-            console.log(cart.value)
+            console.log(pdf.value)
     }
+    return { add_product }
 })

@@ -17,8 +17,8 @@
               <div>currentPrice : {{ product.currentprice }}</div>
             </v-card-text>
             <v-card-actions class="d-flex justify-center"><v-btn variant="elevated" size="x-large"
-                color="orange-darken-3">
-                ລາຍລະອຽດ ສິນຄ້າ
+                color="orange-darken-3" @click="addPdf.add_product(product.id, product.currentprice, product.stock = 1)">
+                ເພີ້ມ ສິນຄ້າ
               </v-btn>
             </v-card-actions>
             <v-card-actions class="d-flex justify-center"><v-btn variant="elevated" size="x-large"
@@ -45,13 +45,16 @@
 import { ref, onMounted } from 'vue';
 import { useProductStore } from '~/stores/pinia';
 import Header11 from '../header11.vue';
+import { usePdf } from '~/stores/pdf';
 
+const addPdf = usePdf()
 const products = useProductStore()
 
 onMounted(async () => {
   await products.fetchProducts()
   console.log(products.products)
 })
+
 const removeProduct = async (id) => {
   await products.removeProduct(id);
 };
