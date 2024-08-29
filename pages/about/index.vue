@@ -125,7 +125,8 @@
 import { ref, onMounted } from 'vue';
 import { useProductStore } from '~/stores/pinia';
 import Header11 from '../header11.vue';
-
+import Swal from 'sweetalert2/dist/sweetalert2.js'
+import 'sweetalert2/src/sweetalert2.scss'
 
 const valid = ref(true);
 const products = useProductStore();
@@ -144,11 +145,21 @@ const submitForm = (isActive) => {
   const form = ref(null);
   if (valid.value) {
     updateProductDetails(selectedProduct.value.id, selectedProduct.value);
+    alert_Edit_Success();
     isActive.value = false;
   } else {
     form.value.validate();
   }
 };
+const alert_Edit_Success= ()=>{
+          Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "ແກ້ໄຂສິນຄ້າສຳເລັດ",
+          showConfirmButton: false,
+          timer: 3000
+        });
+        }
 
 const openDialog = async (productId) => {
   try {

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-
+import Swal from 'sweetalert2/dist/sweetalert2.js'
+import 'sweetalert2/src/sweetalert2.scss'
 
 export const useProductStore = defineStore('Product', {
   state: () => ({
@@ -28,11 +29,13 @@ export const useProductStore = defineStore('Product', {
       try {
         const response = await axios.put(`http://localhost:3300/products/${id}`, updatedProduct);
         await this.fetchProducts();
+      
       } catch (error) {
         console.error('Error updating product:', error);
         throw error;
       }
     },
+    
     async addProduct(product) {
       try {
         const response = await axios.post('http://localhost:3300/products', product);

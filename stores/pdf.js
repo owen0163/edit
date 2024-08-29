@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref  } from 'vue';
-
+import Swal from 'sweetalert2/dist/sweetalert2.js'
+import 'sweetalert2/src/sweetalert2.scss'
 
 export const usePdf = defineStore('usePdf', () =>{
          const pdf = ref([])
@@ -12,11 +13,44 @@ export const usePdf = defineStore('usePdf', () =>{
             stock
         }
 
-        // const findId = pdf.value(e => e.id === data.id)
-        // if(findId){        
-        // }
+        const findId = pdf.value.find(e => e.id === data.id)
+        if(findId){    
+            alert_add_failed()
+        }else{ 
             pdf.value.push(data)
+            saveToLocalStorage()
+            alert_add_success()
+        }
+            
             console.log(pdf.value)
     }
-    return { add_product }
+    const saveToLocalStorage = () =>{
+        localStorage.setItem('pdf', JSON.stringify(pdf.value))
+    }
+
+    const loadFromLocalStorage = () =>{
+        if(localStorage.getItem('pdf')){
+            pdf.value = JSON.parse(localStorage.getItem('pdf'))
+        }
+    }
+
+        const alert_add_success= ()=>{
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "ເພີ້ມສິນຄ້າແລ້ວ",
+                showConfirmButton: false,
+                timer: 3000
+              });
+        }
+        const alert_add_failed= ()=>{
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "ໄດ້ມີເພີ້ມສິນຄ້າແລ້ວ",
+                showConfirmButton: false,
+                timer: 3000
+              });
+        }
+    return { add_product, loadFromLocalStorage }
 })
