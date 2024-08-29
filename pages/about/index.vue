@@ -4,8 +4,11 @@
       <v-col cols="13" md="6" lg="2" v-for="product in products.products" :key="product.id">
         <div>
           <v-card class="mt-15">
-
+            <div class="d-flex justify-center">
+              <v-col lg="12">
             <v-img :height="200" :width="200" :src="product.image" cover></v-img>
+          </v-col>
+          </div>
             <v-card-title>
               {{ product.name }}
 

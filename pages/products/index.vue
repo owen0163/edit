@@ -3,7 +3,11 @@
     <v-row justify="center">
       <v-col cols="12" md="6" lg="2"  v-for="product in products.products" :key="product.id">
         <v-card class="mx-auto mt-50px mt-15" max-width="300">
-          <v-img height="250px" :src="product.image" cover></v-img>
+            <div class="d-flex justify-center">
+              <v-col lg="12">
+            <v-img :height="200" :width="200" :src="product.image" cover></v-img>
+          </v-col>
+          </div>
           <v-card-title>{{ product.name }}</v-card-title>
 
           <v-card-text>
