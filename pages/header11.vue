@@ -9,18 +9,23 @@
         <v-spacer></v-spacer>
         <div class="text-center">
           <v-menu v-model="menu" :close-on-content-click="false">
-            <template v-slot:activator="{ props }">
-              <v-btn color="grey-lighten-5" v-bind="props">
-                Profile
+            <template v-slot:activator="{ props }" class="mr-4">
+              <v-btn color="grey-lighten-5" v-bind="props" >
+                <v-icon size="25px" class="mdi mdi-account-box mr-1"></v-icon>
+               {{ user.name }}
               </v-btn>
             </template>
             <v-card min-width="300">
               <v-list v-if="user">
                 <v-list-item>
-                  <v-list-item-title>Email: {{ user.email }}</v-list-item-title>
+                  <v-list-item-title>
+                    <v-icon size="25px" class="mdi mdi-email"></v-icon>
+                    {{ user.email }}</v-list-item-title>
                 </v-list-item>
                 <v-list-item>
-                  <v-list-item-title>Name: {{ user.name }}</v-list-item-title>
+                  <v-list-item-title>
+                    <v-icon size="25px" class="mdi mdi-account"></v-icon>
+                    {{ user.name }}</v-list-item-title>
                 </v-list-item>
               </v-list>
               <v-divider></v-divider>
@@ -34,7 +39,8 @@
 
               <v-card-actions>
                 <v-col class="text-center">
-                  <v-btn color="primary" variant="text" @click="handleLogout">
+                  <v-btn color="primary" variant="outlined" @click="handleLogout">
+                    <v-icon size="25px" class="mdi mdi-account-arrow-right"></v-icon>
                     Logout
                   </v-btn>
                 </v-col>

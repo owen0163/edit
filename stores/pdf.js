@@ -11,6 +11,10 @@ export const usePdf = defineStore('usePdf', () =>{
             currentprice,
             stock
         }
+
+        // const findId = pdf.value(e => e.id === data.id)
+        // if(findId){        
+        // }
             pdf.value.push(data)
             console.log(pdf.value)
     }

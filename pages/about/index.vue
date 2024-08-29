@@ -5,7 +5,7 @@
         <div>
           <v-card class="mt-15">
 
-            <v-img :height="250" :width="250" :src="product.image" cover></v-img>
+            <v-img :height="200" :width="200" :src="product.image" cover></v-img>
             <v-card-title>
               {{ product.name }}
 
@@ -19,23 +19,27 @@
             <v-card-actions>
               <v-dialog max-width="1200">
                 <template v-slot:activator="{ props: activatorProps }">
-                  <v-btn @click="openDialog(product.id)" variant="elevated" size="x-large" color="orange-darken-3" block
+                  <v-btn @click="openDialog(product.id)" variant="elevated" color="orange-darken-3" block
                     v-bind="activatorProps">
                     ຈັດການຂໍ້ມູນສິນຄ້າ
                   </v-btn>
                 </template>
 
                 <template v-slot:default="{ isActive }">
-                  <v-card >
-                          <v-card-title class="mt-3">
-                            <div>Edit Slot {{ selectedProductId }}</div>
-                          </v-card-title>
+                  <v-card>
+                    <v-card-title class="mt-3">
+                      <div>Edit Slot {{ selectedProductId }}</div>
+                    </v-card-title>
                     <v-divider :thickness="3"></v-divider>
 
-                    <v-row justify="center" class="mt-3">
-                      <v-col cols="13" md="6" lg="4" v-if="selectedProduct" :key="index">
+                    <v-row justify="center" class="mt-2">
+                      <v-col cols="13" md="6" lg="6" v-if="selectedProduct" :key="index">
 
-                        <v-img height="300px" :src="selectedProduct.image" cover></v-img>
+                        <div class="d-flex justify-center">
+                            <v-col lg="4">
+                          <v-img :height="200" :width="200" :src="selectedProduct.image" cover></v-img>
+                        </v-col>
+                        </div>
                         <div class="text-center"> {{ selectedProduct.name }}</div>
                         <div class="text-center"> Price : {{ selectedProduct.currentprice }}</div>
                         <div class="text-center"> Qty : {{ selectedProduct.stock }}</div>
@@ -106,7 +110,7 @@
     </v-row>
   </v-container>
   <v-container>
-  <v-row>
+    <v-row>
       <v-col>
         <Header11></Header11>
       </v-col>
@@ -178,7 +182,7 @@ export default {
         currentPrice: value => !!value || 'Please iput Price',
         maxStock: value => !!value || 'Please iput MaxStock',
         requiredStock: value => !!value || 'Please iput MaxStock',
-        stockRule:  (value, maxStock) => {
+        stockRule: (value, maxStock) => {
 
           if (value > maxStock) {
             return 'Stock cannot exceed max stock'

@@ -273,7 +273,7 @@ app.post('/api/login', async (req, res) => {
     });
      // Ensure user data is properly stringified
      res.cookie('user', JSON.stringify({ email: user.email, name: user.name }), {
-      maxAge: 3600000, // 1 hour
+      maxAge: 36000000, // 1 hour
       secure: true,
       sameSite: 'none',
     });

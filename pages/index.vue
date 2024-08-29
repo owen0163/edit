@@ -8,14 +8,16 @@
               <div class="text-center text-h4">Login</div>
             </v-card-title>
             <v-form v-model="formValid" ref="form">
-              <v-text-field class="mr-2 ml-2" v-model="email" :rules="emailRules" label="Email" required
+              
+              <v-text-field  class="mr-2 ml-2 " v-model="email" :rules="emailRules" label="Email" required
                 type="email"></v-text-field>
               <v-text-field class="mr-2 ml-2" v-model="password" :rules="passwordRules" label="Password" type="password"
                 required></v-text-field>
-              <v-col class="text-center">
-                <v-btn @click="submitForm" :disabled="!formValid" color="primary">
-                  Login
-                </v-btn>
+              <v-col class="text-center">    
+                  <v-btn @click="submitForm" :disabled="!formValid"
+                    color="primary">
+                    Login
+                  </v-btn>
               </v-col>
               <v-alert v-if="error" type="error">
                 {{ error }}
@@ -44,12 +46,12 @@ const successMessage = ref('');
 
 const emailRules = [
   v => !!v || 'Email is required',
-  v => /.+@.+\..+/.test(v) || 'Email must be valid',
+  v => /.+@.+\..+/.test(v) || 'Please input Email',
 ];
 
 const passwordRules = [
   v => !!v || 'Password is required',
-  v => v.length >= 6 || 'Password must be at least 6 characters',
+  v => v.length >= 6 || 'Please input Password ',
 ];
 
 const authStore = useAuthStore();
@@ -66,7 +68,7 @@ const submitForm = async () => {
       router.push('/products'); // Redirect to products page after a short delay
     }, 2000);
   } catch (err) {
-    error.value = 'Login failed. Please check your credentials.';
+    error.value = 'Login failed. Please check Email or password';
   }
 };
 </script>
