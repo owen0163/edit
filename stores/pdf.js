@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref  } from 'vue';
 import Swal from 'sweetalert2/dist/sweetalert2.js'
 import 'sweetalert2/src/sweetalert2.scss'
+import { useProductStore } from '~/stores/pinia';
 
 export const usePdf = defineStore('usePdf', () =>{
          const pdf = ref([])
@@ -33,6 +34,16 @@ export const usePdf = defineStore('usePdf', () =>{
             pdf.value = JSON.parse(localStorage.getItem('pdf'))
         }
     }
+    const pdfPreview = computed(() =>{
+        const ProductStore = useProductStore()
+
+        pdf.value.map((prd, i) => {
+            const findIndexProduct = ProductStore.products.findIndex(e=> e.id == prd.id)
+            return{
+                products : ProductStore.products[findIndexProduct]
+            }
+        })
+    })
 
         const alert_add_success= ()=>{
             Swal.fire({
@@ -52,5 +63,5 @@ export const usePdf = defineStore('usePdf', () =>{
                 timer: 3000
               });
         }
-    return { add_product, loadFromLocalStorage }
+    return { pdf, add_product, loadFromLocalStorage, pdfPreview }
 })

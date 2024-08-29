@@ -58,10 +58,12 @@ import { ref, computed, onMounted } from 'vue';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useProductStore } from '~/stores/pinia';
+import { usePdf } from '~/stores/pdf';
 
 import Header11 from '../header11.vue';
 import VueCookies from 'vue-cookies';
 
+const pdfStore = usePdf();
 const products = useProductStore();
 const billContent = ref(null);
 const user = ref({ email: '', name: '' });
