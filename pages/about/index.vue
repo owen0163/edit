@@ -178,7 +178,7 @@ watch(selectedProductId, updateSelectedProduct);
 const updateProductDetails = async (productId, updatedProduct) => {
   try {
     await products.updateProduct(productId, updatedProduct);
-    alert('Product updated successfully');
+  
   } catch (error) {
     console.error('Error updating product:', error);
   }

@@ -16,7 +16,7 @@
           </v-card-text>
 
           <v-card-actions class="d-flex justify-center">
-            <v-btn variant="elevated" color="orange-darken-3"
+            <v-btn variant="elevated" color="blue-darken-2"
               @click="addPdf.add_product(product.id, product.currentprice)">
               ເພີ້ມສິນຄ້າ
             </v-btn>
@@ -25,7 +25,7 @@
           <v-card-actions class="d-flex justify-center">
             <v-dialog max-width="500">
               <template v-slot:activator="{ props: activatorProps }">
-                <v-btn v-bind="activatorProps" color="orange-darken-3" variant="elevated">
+                <v-btn v-bind="activatorProps" color="red-darken-2" variant="elevated">
                   ລົບສິນຄ້າ
                 </v-btn>
               </template>
@@ -42,10 +42,10 @@
 
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn variant="elevated" text="Close" @click="isActive.value = false" color="orange-darken-3">
+                    <v-btn variant="elevated" text="Close" @click="isActive.value = false" color="blue-darken-3">
                       Close
                     </v-btn>
-                    <v-btn variant="elevated" @click="submitForm(product.id, isActive)" color="orange-darken-3">
+                    <v-btn variant="elevated" @click="submitForm(product.id, isActive)" color="red-darken-2">
                       ລົບສິນຄ້າ
                     </v-btn>
                   </v-card-actions>

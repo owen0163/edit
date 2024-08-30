@@ -55,7 +55,7 @@
           <v-list-item href="/products">ຂໍ້ມູນສິນຄ້າ</v-list-item>
           <v-list-item href="/add">ເພີ້ມມູນສິນຄ້າ</v-list-item>
           <v-list-item href="/about">ຈັດການຂໍ້ມູນສິນຄ້າ</v-list-item>
-          <v-list-item href="/pdf">pdf</v-list-item>
+          <v-list-item href="/bills">pdf</v-list-item>
         </v-list>
       </v-navigation-drawer>
     </v-layout>

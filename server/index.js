@@ -16,6 +16,7 @@ const corsOptions = {
   origin: 'http://localhost:3000', // Your frontend origin
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 };
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(bodyParser.json());
@@ -180,41 +181,6 @@ app.post('/api/register', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-////////////////////////////////////////////////////////
-////// login
-// app.post('/api/login', async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     // Query to fetch the user by email
-//     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-//     const user = result.rows[0]:
-//     // If no user is found, return an error
-//     if (!user) {
-//       return res.status(401).json({ error: 'Invalid email or password' });
-//     }
-
-//     // Compare the provided password with the stored hashed password
-//     const isPasswordValid = await bcrypt.compare(password, user.password);
-
-//     // If the password is incorrect, return an error
-//     if (!isPasswordValid) {
-//       return res.status(401).json({ error: 'Invalid email or password' });
-//     }
-
-//     // Generate a JWT token
-//     const token = jwt.sign({ id: user.id, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
-
-//     // Return the token to the client
-//     res.json({
-//       message: 'Login successful',
-//       token,
-//     });
-//   } catch (error) {
-//     console.error('Error logging in user:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
 /////////////////////////////////////////
 
 
@@ -272,61 +238,19 @@ app.post('/api/login', async (req, res) => {
       sameSite : "none"
     });
      // Ensure user data is properly stringified
-     res.cookie('user', JSON.stringify({ email: user.email, name: user.name }), {
+     res.cookie('user', JSON.stringify({ email: user.email, name: user.name, user_id: user.user_id }), {
       maxAge: 36000000, // 1 hour
       secure: true,
       sameSite: 'none',
     });
-      res.send({ message:"Login successful", user: { email: user.email, name: user.name } });
+      res.send({ message:"Login successful", user: { email: user.email, name: user.name, user_id: user.user_id } });
   } catch (error) {
     console.error('Error logging in user:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 ////////////////////////////////////
-// app.get('/users', async (req, res) => {
-//   try {
-//     const authHeader = req.headers['authorization'];
-//     let authToken = '';
 
-//     if (authHeader) {
-//       authToken = authHeader.split(' ')[1];
-//     } else {
-//       return res.status(401).json({ message: 'Authorization header missing' });
-//     }
- 
-//     console.log("authToken", authToken);
-
-//     try {
-//       const user = jwt.verify(authToken, 'your_jwt_secret'); 
-//       console.log('user', user);
-
-//       // Check if the user exists in the database
-//       const checkResult = await pool.query('SELECT * FROM users WHERE email = $1', [user.email]);
-
-//       if (checkResult.rowCount === 0) {
-//         return res.status(404).json({ message: 'User not found' });
-//       }
-
-//       // Return the user's own details
-//       res.json({
-//         user: checkResult.rows[0]
-//       });
-//     } catch (err) {
-//       console.error('JWT verification error:', err);
-//       res.status(403).json({ 
-//         message: 'Authentication failed. Invalid token.'
-//       });
-//     }
-//   } catch (err) {
-//     console.error('error', err);
-//     res.status(403).json({
-//       message: 'Authentication failed'
-//     });
-//   }
-// });
-
-// module.exports = app;
 //////////////////////////////////////////////////////////////////
 app.get('/users', async (req, res) => {
   try {
@@ -371,7 +295,113 @@ app.get('/users', async (req, res) => {
 });
 
 module.exports = app;
+///////////////////////////////////////////////////////////////////
+// app.post('/bills', async (req, res) => {
+//   const { name, products } = req.body;
 
+//   // Validate the input
+//   if (!name || !Array.isArray(products) || products.length === 0) {
+//     return res.status(400).json({ error: 'Name and products are required' });
+//   }
+
+//   const client = await pool.connect(); // Get a client connection
+
+//   try {
+//     await client.query('BEGIN'); // Start a transaction
+
+//     // Insert into bill table
+//     const billResult = await client.query(
+//       'INSERT INTO bill (name, bill_date, total_amount) VALUES ($1, NOW(), 0) RETURNING id',
+//       [name] // Use `name` instead of `userId`
+//     );
+//     const billId = billResult.rows[0].id;
+
+//     let totalAmount = 0;
+
+//     // Insert into bill_products table
+//     for (const product of products) {
+//       const { productId, quantity, price } = product;
+
+//       await client.query(
+//         'INSERT INTO bill_products (bill_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)',
+//         [billId, productId, quantity, price]
+//       );
+
+//       // Calculate the total amount for this bill
+//       totalAmount += quantity * price;
+//     }
+
+//     // Update the total_amount in the bill table
+//     await client.query(
+//       'UPDATE bill SET total_amount = $1 WHERE id = $2',
+//       [totalAmount, billId]
+//     );
+
+//     await client.query('COMMIT'); // Commit the transaction
+
+//     res.status(201).json({ message: 'Bill created successfully', billId });
+//   } catch (error) {
+//     await client.query('ROLLBACK'); // Rollback in case of an error
+//     console.error('Error creating bill:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   } finally {
+//     client.release(); // Release the client back to the pool
+//   }
+// });
+
+app.post('/bills', async (req, res) => {
+  const { userId, products } = req.body;
+
+  // Validate the input
+  if (!userId || !Array.isArray(products) || products.length === 0) {
+    return res.status(400).json({ error: 'userId and products are required' });
+  }
+
+  const client = await pool.connect(); // Get a client connection
+
+  try {
+    await client.query('BEGIN'); // Start a transaction
+
+    // Insert into bill table
+    const billResult = await client.query(
+      'INSERT INTO bill (user_id, bill_date, total_amount) VALUES ($1, NOW(), 0) RETURNING id',
+      [userId]
+    );
+    const billId = billResult.rows[0].id;
+
+    let totalAmount = 0;
+
+    // Insert into bill_products table
+    for (const product of products) {
+      const { productId, quantity, price } = product;
+
+      await client.query(
+        'INSERT INTO bill_products (bill_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)',
+        [billId, productId, quantity, price]
+      );
+
+      // Calculate the total amount for this bill
+      totalAmount += quantity * price;
+    }
+
+    // Update the total_amount in the bill table
+    await client.query(
+      'UPDATE bill SET total_amount = $1 WHERE id = $2',
+      [totalAmount, billId]
+    );
+
+    await client.query('COMMIT'); // Commit the transaction
+
+    res.status(201).json({ message: 'Bill created successfully', billId });
+  } catch (error) {
+    await client.query('ROLLBACK'); // Rollback in case of an error
+    console.error('Error creating bill:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  } finally {
+    client.release(); // Release the client back to the pool
+  }
+});
+//////////////////////////////////////////////////
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // Allow your frontend origin
   res.header('Access-Control-Allow-Credentials', 'true'); // Allow credentials to be sent
