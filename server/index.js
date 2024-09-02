@@ -234,7 +234,7 @@ app.post('/api/login', async (req, res) => {
       // secure: process.env.NODE_ENV === 'production',
       // sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
       // path: '/',
-      maxAge: 3600000,
+      maxAge: 360000,
       httpOnly: true,
       secure: true,
       sameSite : "none"
