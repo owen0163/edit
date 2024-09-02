@@ -2,7 +2,7 @@
   <v-container class="bill-container">
     <v-card outlined class="mt-15">
       <div ref="billContent">
-        <v-card-title>Vendee</v-card-title>
+        <v-card-title class="text-center">bill</v-card-title>
         <v-card-subtitle>UserID: {{ user.user_id || 'Unknown' }}</v-card-subtitle>
         <v-card-subtitle>User: {{ user?.name || 'Unknown' }}</v-card-subtitle>
         <v-card-subtitle>Date: {{ currentDateTime }}</v-card-subtitle>
@@ -25,10 +25,12 @@
                 <td>{{ pdf.id }}</td>
                 <td>{{ pdf.name }}</td>
                 <td>
-                  <img :src="pdf.img" alt="Product Image" style="width: 50px; height: 50px; object-fit: cover;">
+                  <img :src="pdf.img" alt="Product Image" style="width: 50px; height: 50px; object-fit: cover;"
+                    @load="onImageLoad" @error="onImageError" />
                 </td>
                 <td>
-                  <v-text-field v-model="pdf.stock" variant="plain" class="text-center"
+                  <v-text-field v-model="pdf.stock" type="number" class="ml-4" variant="plain"
+                    style="max-width: 70px; font-size: 12px; padding: 0 10px;"
                     @keydown.enter="checkAndSaveStock(pdf)"></v-text-field>
                 </td>
                 <td>{{ pdf.currentprice }}</td>
@@ -45,7 +47,17 @@
               </tr>
             </tbody>
           </v-table>
-
+          <v-card-text>
+              <v-row justify="space-between" >
+                <v-col cols="3">
+                 ຜູ້ອອກເຄື່ອງ
+                </v-col>
+             
+                <v-col class="text-left">
+                  ຜູ້ຮັບເຄື່ອງ
+                </v-col>
+              </v-row>
+            </v-card-text>
         </v-card-text>
       </div>
     </v-card>
@@ -86,6 +98,9 @@ const billStore = useBillStore();
 const billContent = ref(null);
 const user = ref({ email: '', name: '' });
 
+const totalImages = ref(0);
+const loadedImages = ref(0);
+
 const pdfOrder = computed(() => pdfStore.pdfPreview);
 
 onMounted(async () => {
@@ -98,20 +113,20 @@ onMounted(async () => {
     console.error('User data not found in cookies');
   }
 
-  // Load the PDF data from localStorage
   pdfStore.loadFromLocalStorage();
+  totalImages.value = pdfOrder.value.length;
 });
 
 const checkAndSaveStock = (pdf) => {
-  const maxStock = products.products.find(product => product.id === pdf.id).stock;
-  if (pdf.stock <= maxStock && pdf.stock >= 0) { // Ensure stock is not negative
-    pdfStore.updateProductStock(pdf.id, pdf.stock); // Update the store
+  const stock = products.products.find(product => product.id === pdf.id).stock;
+  if (pdf.stock <= stock && pdf.stock >= 0) {
+    pdfStore.updateProductStock(pdf.id, pdf.stock);
   } else {
-    pdf.stock = maxStock; // Reset to max stock if exceeded
+    pdf.stock = stock;
     Swal.fire({
       position: "center",
       icon: "error",
-      title: `Cannot exceed max stock of ${maxStock}`,
+      title: `Cannot exceed stock of ${stock}`,
       showConfirmButton: false,
       timer: 3000
     });
@@ -132,22 +147,90 @@ const currentDateTime = ref(new Date().toLocaleString('en-US', {
   hour12: false,
 }));
 
-const generatePDF = () => {
-  const element = billContent.value;
+const onImageLoad = () => {
+  loadedImages.value++;
+  if (loadedImages.value === totalImages.value) {
+    console.log('All images loaded');
+  }
+};
 
-  html2canvas(element).then((canvas) => {
+const onImageError = (event) => {
+  console.error(`Image failed to load: ${event.target.src}`); // Debug log
+  event.target.src = '/path/to/placeholder-image.png'; // Fallback image
+  loadedImages.value++;
+  if (loadedImages.value === totalImages.value) {
+    console.log('All images handled (loaded or failed).');
+  }
+};
+
+const generatePDF = () => {
+  if (loadedImages.value < totalImages.value) {
+    Swal.fire({
+      position: "center",
+      icon: "info",
+      title: "Please wait until all images are loaded.",
+      showConfirmButton: false,
+      timer: 3000
+    });
+    return;
+  }
+
+  const element = billContent.value;
+  const pageWidth = 210; // A4 width in mm
+  const pageHeight = 297; // A4 height in mm
+
+  html2canvas(element, {
+    useCORS: true, // Enable cross-origin for images
+    allowTaint: true,
+    logging: true,
+  }).then((canvas) => {
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 210; // A4 width in mm
+    const imgWidth = pageWidth;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+    let position = 0; // Initial Y position for the image
+
+    // Add pages if needed
+    while (position < imgHeight) {
+      pdf.addImage(imgData, 'PNG', 0, -position, imgWidth, imgHeight);
+
+      // Add a new page if more content remains
+      if (position + pageHeight < imgHeight) {
+        pdf.addPage();
+      }
+
+      position += pageHeight; // Move to the next page
+    }
+
     pdf.save('bill.pdf');
+  }).catch((error) => {
+    console.error('Error generating PDF:', error);
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Failed to generate PDF.",
+      showConfirmButton: false,
+      timer: 3000
+    });
+
+
+    pdf.save('bill.pdf');
+  }).catch((error) => {
+    console.error('Error generating PDF:', error);
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Failed to generate PDF.",
+      showConfirmButton: false,
+      timer: 3000
+    });
   });
 };
+
 const postBillToDatabase = () => {
   const billData = {
-    userId: user.value.user_id, // Ensure this matches the backend's expected field
+    userId: user.value.user_id,
     products: pdfOrder.value.map(item => ({
       productId: item.id,
       quantity: item.stock,
@@ -155,20 +238,15 @@ const postBillToDatabase = () => {
     })),
   };
 
-  console.log('Posting bill data:', JSON.stringify(billData, null, 2)); // Log the data to verify
+  console.log('Posting bill data:', JSON.stringify(billData, null, 2));
   billStore.postBill(billData);
 };
-const clearPdfData = () => {
-  // Clear PDF data from localStorage
-  localStorage.removeItem('pdf');
-  
-  // Optionally clear the state in the Pinia store
-  pdfStore.pdf.value = [];
 
-  // Optionally, reload from localStorage if you need to ensure it's empty
+const clearPdfData = () => {
+  localStorage.removeItem('pdf');
+  pdfStore.pdf.value = [];
   pdfStore.loadFromLocalStorageToClear();
 
-  // Notify the user
   Swal.fire({
     position: "center",
     icon: "success",
@@ -177,6 +255,7 @@ const clearPdfData = () => {
     timer: 3000
   });
 };
+
 const generatePDFAndPostBill = () => {
   generatePDF();
   postBillToDatabase();

@@ -5,14 +5,22 @@
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title>
           <v-btn href="/products">Vendee</v-btn>
+       
+            <v-btn class="text-none" stacked href="/bills">
+              <v-badge color="error" :content="pdfCount">
+                <v-icon>mdi-clipboard-text</v-icon>
+              </v-badge>
+            </v-btn>
+  
+
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <div class="text-center">
           <v-menu v-model="menu" :close-on-content-click="false">
             <template v-slot:activator="{ props }" class="mr-4">
-              <v-btn color="grey-lighten-5" v-bind="props" >
+              <v-btn color="grey-lighten-5" v-bind="props">
                 <v-icon size="25px" class="mdi mdi-account-box mr-1"></v-icon>
-               {{ user.name }}
+                {{ user.name }}
               </v-btn>
             </template>
             <v-card min-width="300">
@@ -20,23 +28,22 @@
                 <v-list-item>
                   <v-list-item-title>
                     <v-icon size="25px" class="mdi mdi-email"></v-icon>
-                    {{ user.email }}</v-list-item-title>
+                    {{ user.email }}
+                  </v-list-item-title>
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-title>
                     <v-icon size="25px" class="mdi mdi-account"></v-icon>
-                    {{ user.name }}</v-list-item-title>
+                    {{ user.name }}
+                  </v-list-item-title>
                 </v-list-item>
               </v-list>
               <v-divider></v-divider>
-
               <v-list>
                 <v-list-item>
-                  
-
+                  <!-- Additional list items -->
                 </v-list-item>
               </v-list>
-
               <v-card-actions>
                 <v-col class="text-center">
                   <v-btn color="primary" variant="outlined" @click="handleLogout">
@@ -49,13 +56,12 @@
           </v-menu>
         </div>
       </v-app-bar>
-
       <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'bottom' : undefined" temporary>
         <v-list>
           <v-list-item href="/products">ຂໍ້ມູນສິນຄ້າ</v-list-item>
           <v-list-item href="/add">ເພີ້ມມູນສິນຄ້າ</v-list-item>
           <v-list-item href="/about">ຈັດການຂໍ້ມູນສິນຄ້າ</v-list-item>
-          <v-list-item href="/bills">pdf</v-list-item>
+          <v-list-item href="/bills">ໃບບິນ</v-list-item>
         </v-list>
       </v-navigation-drawer>
     </v-layout>
@@ -63,22 +69,29 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 import { useAuthStore } from '~/stores/auth';
-import { useRouter } from 'vue-router'; // Ensure this is imported
+import { useRouter } from 'vue-router';
 import VueCookies from 'vue-cookies';
+import { usePdf } from '~/stores/pdf';
 
 const token = ref(null);
 const user = ref({ email: '', name: '' });
 const authStore = useAuthStore();
-const router = useRouter(); // Initialize router
+const router = useRouter();
 const menu = ref(false);
 const drawer = ref(false);
+const pdfStore = usePdf();
+const pdfCount = ref(0);
+
+// Watch effect to update pdfCount on client side
+watchEffect(() => {
+  pdfCount.value = pdfStore.pdf.length;
+});
 
 onMounted(async () => {
   const userData = VueCookies.get('user');
   if (userData) {
-    console.log('Raw userData from cookie:', userData);
     user.value = userData;
   } else {
     console.error('User data not found in cookies');
@@ -88,15 +101,16 @@ onMounted(async () => {
 const handleLogout = async () => {
   try {
     await authStore.logout();
-    menu.value = false; // Close the menu on logout
+    menu.value = false;
     VueCookies.remove('token', { path: '/' });
     VueCookies.remove('user', { path: '/' });
-    router.push('/');  // Redirect to home or login page
+    router.push('/');
   } catch (error) {
     console.error('Logout failed:', error);
   }
 };
 </script>
+
 <script>
 export default {
   data: () => ({

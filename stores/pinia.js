@@ -47,15 +47,15 @@ export const useProductStore = defineStore('Product', {
         throw error;
       }
   },
-    async removeProduct(id) {
-      try {
-        await axios.delete(`http://localhost:3300/products/${id}`);
-        await this.fetchProducts();
-      } catch (error) {
-        console.error('Error deleting product:', error);
-        throw error;
-      }
-    },
+  async removeProduct(id) {
+    try {
+      await axios.delete(`http://localhost:3300/products/${id}`);
+      await this.fetchProducts();
+    } catch (error) {
+      console.error('Error deleting product:', error.response?.data || error.message);
+      alert(`Error: ${error.response?.data?.message || error.message}`);
+    }
+  },
 
   },
 });

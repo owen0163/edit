@@ -157,7 +157,9 @@ app.delete('/products/:id', async (req, res) => {
   }
 });
 
+
 module.exports = app;
+
 /////////////////////////////////////////////////////////////////
 /////// register
 app.post('/api/register', async (req, res) => {
@@ -296,58 +298,7 @@ app.get('/users', async (req, res) => {
 
 module.exports = app;
 ///////////////////////////////////////////////////////////////////
-// app.post('/bills', async (req, res) => {
-//   const { name, products } = req.body;
 
-//   // Validate the input
-//   if (!name || !Array.isArray(products) || products.length === 0) {
-//     return res.status(400).json({ error: 'Name and products are required' });
-//   }
-
-//   const client = await pool.connect(); // Get a client connection
-
-//   try {
-//     await client.query('BEGIN'); // Start a transaction
-
-//     // Insert into bill table
-//     const billResult = await client.query(
-//       'INSERT INTO bill (name, bill_date, total_amount) VALUES ($1, NOW(), 0) RETURNING id',
-//       [name] // Use `name` instead of `userId`
-//     );
-//     const billId = billResult.rows[0].id;
-
-//     let totalAmount = 0;
-
-//     // Insert into bill_products table
-//     for (const product of products) {
-//       const { productId, quantity, price } = product;
-
-//       await client.query(
-//         'INSERT INTO bill_products (bill_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)',
-//         [billId, productId, quantity, price]
-//       );
-
-//       // Calculate the total amount for this bill
-//       totalAmount += quantity * price;
-//     }
-
-//     // Update the total_amount in the bill table
-//     await client.query(
-//       'UPDATE bill SET total_amount = $1 WHERE id = $2',
-//       [totalAmount, billId]
-//     );
-
-//     await client.query('COMMIT'); // Commit the transaction
-
-//     res.status(201).json({ message: 'Bill created successfully', billId });
-//   } catch (error) {
-//     await client.query('ROLLBACK'); // Rollback in case of an error
-//     console.error('Error creating bill:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   } finally {
-//     client.release(); // Release the client back to the pool
-//   }
-// });
 
 app.post('/bills', async (req, res) => {
   const { userId, products } = req.body;
