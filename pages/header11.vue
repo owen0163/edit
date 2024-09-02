@@ -62,6 +62,7 @@
           <v-list-item href="/add">ເພີ້ມມູນສິນຄ້າ</v-list-item>
           <v-list-item href="/about">ຈັດການຂໍ້ມູນສິນຄ້າ</v-list-item>
           <v-list-item href="/bills">ໃບບິນ</v-list-item>
+          <v-list-item href="/history">ປະຫວັດໃບບິນ</v-list-item>
         </v-list>
       </v-navigation-drawer>
     </v-layout>

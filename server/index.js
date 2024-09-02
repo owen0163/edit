@@ -353,6 +353,72 @@ app.post('/bills', async (req, res) => {
   }
 });
 //////////////////////////////////////////////////
+// app.get('/bills', async (req, res) => {
+//   try {
+//     const result = await pool.query(`
+//       SELECT b.id AS bill_id, b.user_id, b.bill_date, b.total_amount, 
+//              bp.product_id, bp.quantity, bp.price, 
+//              p.name AS product_name, p.defaultprice AS product_defaultprice, 
+//              p.currentprice AS product_currentprice
+//       FROM bill b
+//       JOIN bill_products bp ON b.id = bp.bill_id
+//       JOIN products p ON bp.product_id = p.id
+//     `);
+
+//     const bills = result.rows.reduce((acc, row) => {
+//       const { bill_id, user_id, bill_date, total_amount, product_id, quantity, price, product_name, product_defaultprice, product_currentprice } = row;
+
+//       if (!acc[bill_id]) {
+//         acc[bill_id] = {
+//           bill_id,
+//           user_id,
+//           bill_date,
+//           total_amount,
+//           products: []
+//         };
+//       }
+
+//       acc[bill_id].products.push({
+//         product_id,
+//         quantity,
+//         price,
+//         product_name,
+//         product_defaultprice,
+//         product_currentprice
+//       });
+
+//       return acc;
+//     }, {});
+
+//     res.json(Object.values(bills));
+//   } catch (err) {
+//     console.error('Error fetching bills:', err);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+app.get('/bills', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM bill');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching bills:', err.stack);
+    res.status(500).json({ error: err.message });
+  }
+});
+app.get('/bills/:id/products', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(
+      'SELECT * FROM bill_products WHERE bill_id = $1',
+      [id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching bill products:', err.stack);
+    res.status(500).json({ error: err.message });
+  }
+});
+////////////////////////////////////////////////////
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:3000'); // Allow your frontend origin
   res.header('Access-Control-Allow-Credentials', 'true'); // Allow credentials to be sent

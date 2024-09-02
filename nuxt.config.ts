@@ -6,7 +6,22 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 //..
 // nuxt.config.js
-plugins: [{ src: '~/plugins/cookie.js', mode: 'client' }],
+vite: {
+  vue: {
+    template: {
+      transformAssetUrls,
+    },
+   
+  },
+  plugins: [
+    vuetify({ autoImport: true }),
+  ],
+},
+plugins: [
+  { src: '~/plugins/cookie.js', mode: 'client' }, // Include other plugins as needed
+  // You can add other plugins here if necessary
+],
+
   //...
   build: {
     transpile: ['vuetify'],
@@ -26,15 +41,7 @@ plugins: [{ src: '~/plugins/cookie.js', mode: 'client' }],
       jwtSecret: process.env.JWT_SECRET || 'your_jwt_secret',
     },
   },
-  vite: {
- 
-    vue: {
-      template: {
-        transformAssetUrls,
-      },
-     
-    },
-  },
+  
 })
 
 
