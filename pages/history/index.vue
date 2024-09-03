@@ -36,7 +36,18 @@
                 </v-row>
               </v-container>
             </v-expansion-panel-text>
-            <v-col class="text-h6 ml-6">ລາຄາລວມ : {{ bill.total_amount }}</v-col>  
+     
+             <v-row justify="space-between" >
+                <v-col cols="6"
+                  class="text-h6 ml-6">ລາຄາລວມ : {{ bill.total_amount }}
+                </v-col>
+             
+                <v-col class="text-end mr-6 mb-2">
+                  <v-btn variant="flat" color="light-blue-darken-2" @click="addbills(bill.bill_id, bill.username, bill.bill_date)">
+              add
+            </v-btn>
+                </v-col>
+              </v-row>
           </v-card>
           </v-expansion-panel>
 
@@ -62,6 +73,8 @@ import { useBillHistory } from '@/stores/useBillHistory';
 import { onMounted } from 'vue';
 import Header11 from '../header11.vue';
 
+import { usePdfHistory } from '~/stores/pdfHistory';
+const pdfHistoryStore = usePdfHistory();
 const billStore = useBillHistory();
 
 onMounted(() => {
@@ -69,5 +82,9 @@ onMounted(() => {
   console.log(billStore.billsHistory); // Log billsHistory to check if username is present
 });
 const variants = ['outlined']
+
+const addbills = (bill_id, username, bill_date) => {
+    pdfHistoryStore.add_bill(bill_id, username, bill_date);
+};
 
 </script>

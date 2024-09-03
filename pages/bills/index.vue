@@ -259,8 +259,6 @@ const clearPdfData = () => {
 const generatePDFAndPostBill = () => {
   generatePDF();
   postBillToDatabase();
-  clearPdfData();
-  router.push({ name: 'products' });
 };
 </script>
 
