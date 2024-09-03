@@ -7,6 +7,7 @@ export default defineNuxtConfig({
 //..
 // nuxt.config.js
 vite: {
+  
   vue: {
     template: {
       transformAssetUrls,
