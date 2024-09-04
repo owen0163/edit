@@ -7,8 +7,8 @@
           <v-btn href="/products">Vendee</v-btn>
        
             <v-btn class="text-none" stacked href="/bills">
-              <v-badge color="error" :content="pdfCount">
-                <v-icon>mdi-clipboard-text</v-icon>
+              <v-badge color="error" :content="pdfCount" >
+                <v-icon size="large">mdi-cart</v-icon>
               </v-badge>
             </v-btn>
   

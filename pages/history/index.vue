@@ -3,7 +3,7 @@
 <v-container>
     <v-row>
       <v-col>
-  <v-card v-if="billStore.loading">
+  <v-card v-if="billStore.loading" class="mb-6 mt-15 mx-auto">
     <v-card-text>Loading...</v-card-text>
   </v-card>
 
@@ -43,9 +43,9 @@
                 </v-col>
              
                 <v-col class="text-end mr-6 mb-2">
-                  <v-btn variant="flat" color="light-blue-darken-2" @click="addbills(bill.bill_id, bill.username, bill.bill_date)">
-              add
-            </v-btn>
+                  <v-btn variant="flat" color="light-blue-darken-2" @click="addbills(bill.bill_id, bill.username, bill.bill_date, bill.total_amount, bill.products)">
+    Add
+</v-btn>
                 </v-col>
               </v-row>
           </v-card>
@@ -83,8 +83,8 @@ onMounted(() => {
 });
 const variants = ['outlined']
 
-const addbills = (bill_id, username, bill_date) => {
-    pdfHistoryStore.add_bill(bill_id, username, bill_date);
+const addbills = (bill_id, username, bill_date, total_amount, products) => {
+    pdfHistoryStore.add_bill(bill_id, username, bill_date, total_amount, products);
 };
 
 </script>

@@ -7,8 +7,8 @@ import { useBillHistory } from '@/stores/useBillHistory';
 export const usePdfHistory = defineStore('usePdfHistory', () => {
     const bills = ref([]);
 
-    const add_bill = (bill_id, username, bill_date) => {
-        const data = { bill_id, username, bill_date };
+    const add_bill = (bill_id, username, bill_date, total_amount, products) => {
+        const data = { bill_id, username, bill_date, total_amount, products };
         const findId = bills.value.find(e => e.bill_id === data.bill_id);
         if (findId) {    
             alert_add_failed();
@@ -49,7 +49,11 @@ export const usePdfHistory = defineStore('usePdfHistory', () => {
             timer: 3000
         });
     };
-
+    const loadFromLocalStorageToClear = () => {
+        const storedbills = localStorage.getItem('bills');
+        bills.value = storedbills ? JSON.parse(storedbills) : [];
+      };
+    
 
     const pdfbillPreview = computed(() => {
         const billsHistory = useBillHistory();
@@ -64,5 +68,5 @@ export const usePdfHistory = defineStore('usePdfHistory', () => {
         });
       });
 
-    return { bills, add_bill, loadFromLocalStorage, saveToLocalStorage, pdfbillPreview };
+    return { bills, add_bill, loadFromLocalStorage, saveToLocalStorage, pdfbillPreview, loadFromLocalStorageToClear };
 });
