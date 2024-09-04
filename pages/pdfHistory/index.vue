@@ -47,7 +47,7 @@
                            
                         </tbody>
                     </v-table>
-                    <v-card-text>
+                    <!-- <v-card-text>
                         <v-row justify="space-between">
                             <v-col cols="3">
                                 ຜູ້ອອກເຄື່ອງ
@@ -56,7 +56,7 @@
                                 ຜູ້ຮັບເຄື່ອງ
                             </v-col>
                         </v-row>
-                    </v-card-text>
+                    </v-card-text> -->
                 </v-card-text>
             </div>
         </v-card>

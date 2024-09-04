@@ -37,6 +37,7 @@ export const useAuthStore = defineStore('auth', {
         console.error('Login failed:', error);
         throw error;
       }
+  
     },
     async fetchUser() {
       try {
@@ -60,5 +61,6 @@ export const useAuthStore = defineStore('auth', {
       this.token = null;
       this.user = null;
     },
+    
   },
 });
