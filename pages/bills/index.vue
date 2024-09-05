@@ -186,7 +186,7 @@ const generatePDF = () => {
   // Table Headers
   pdf.setFontSize(10);
   const cellHeight = 15;
-  const cellWidth = [20, 60, 20, 20, 20, 30]; // Widths for each column
+  const cellWidth = [20, 70, 25, 20, 20, 30]; // Widths for each column
   const headers = ['ID', 'Item', 'Image', 'Quantity', 'Price', 'Amount'];
 
   let xPosition = margin;
