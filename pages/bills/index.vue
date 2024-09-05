@@ -48,16 +48,16 @@
             </tbody>
           </v-table>
           <v-card-text>
-              <v-row justify="space-between" >
-                <v-col cols="3">
-                 ຜູ້ອອກເຄື່ອງ
-                </v-col>
-             
-                <v-col class="text-left">
-                  ຜູ້ຮັບເຄື່ອງ
-                </v-col>
-              </v-row>
-            </v-card-text>
+            <v-row justify="space-between">
+              <v-col cols="3">
+                ຜູ້ອອກເຄື່ອງ
+              </v-col>
+
+              <v-col class="text-left">
+                ຜູ້ຮັບເຄື່ອງ
+              </v-col>
+            </v-row>
+          </v-card-text>
         </v-card-text>
       </div>
     </v-card>
@@ -162,72 +162,117 @@ const onImageError = (event) => {
     console.log('All images handled (loaded or failed).');
   }
 };
-
+/////////////////////////////////////////////////////////////////////////////////
 const generatePDF = () => {
-  if (loadedImages.value < totalImages.value) {
-    Swal.fire({
-      position: "center",
-      icon: "info",
-      title: "Please wait until all images are loaded.",
-      showConfirmButton: false,
-      timer: 3000
-    });
-    return;
-  }
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const margin = 10;
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  let yPosition = margin;
+  
+  // Title and Basic User Info
+  pdf.setFontSize(18);
+  pdf.text('Bill', pageWidth / 2, yPosition, { align: 'center' });
+  yPosition += 10;
+  
+  pdf.setFontSize(12);
+  pdf.text(`UserID: ${user.value.user_id || 'Unknown'}`, margin, yPosition);
+  yPosition += 6;
+  pdf.text(`User: ${user.value.name || 'Unknown'}`, margin, yPosition);
+  yPosition += 6;
+  pdf.text(`Date: ${currentDateTime.value}`, margin, yPosition);
+  yPosition += 10;
 
-  const element = billContent.value;
-  const pageWidth = 210; // A4 width in mm
-  const pageHeight = 297; // A4 height in mm
+  // Table Headers
+  pdf.setFontSize(10);
+  const cellHeight = 15;
+  const cellWidth = [20, 60, 20, 20, 20, 30]; // Widths for each column
+  const headers = ['ID', 'Item', 'Image', 'Quantity', 'Price', 'Amount'];
 
-  html2canvas(element, {
-    useCORS: true, // Enable cross-origin for images
-    allowTaint: true,
-    logging: true,
-  }).then((canvas) => {
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pageWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  let xPosition = margin;
 
-    let position = 0; // Initial Y position for the image
-
-    // Add pages if needed
-    while (position < imgHeight) {
-      pdf.addImage(imgData, 'PNG', 0, -position, imgWidth, imgHeight);
-
-      // Add a new page if more content remains
-      if (position + pageHeight < imgHeight) {
-        pdf.addPage();
-      }
-
-      position += pageHeight; // Move to the next page
-    }
-
-    pdf.save('bill.pdf');
-  }).catch((error) => {
-    console.error('Error generating PDF:', error);
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: "Failed to generate PDF.",
-      showConfirmButton: false,
-      timer: 3000
-    });
-
-
-    pdf.save('bill.pdf');
-  }).catch((error) => {
-    console.error('Error generating PDF:', error);
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: "Failed to generate PDF.",
-      showConfirmButton: false,
-      timer: 3000
-    });
+  // Draw table headers
+  headers.forEach((header, index) => {
+    pdf.text(header, xPosition + 2, yPosition + 6); // Slightly adjust for padding
+    pdf.rect(xPosition, yPosition, cellWidth[index], cellHeight); // Header cell border
+    xPosition += cellWidth[index];
   });
+
+  yPosition += cellHeight; // Move to next row for data
+
+  // Draw table data
+  pdfOrder.value.forEach((pdfItem) => {
+    if (yPosition + cellHeight > pageHeight - margin) {
+      pdf.addPage();
+      yPosition = margin;
+    }
+    
+    xPosition = margin;
+    
+    // Draw ID cell
+    pdf.text(pdfItem.id.toString(), xPosition + 10, yPosition + 8,{ align: 'center' } );
+    pdf.rect(xPosition, yPosition, cellWidth[0], cellHeight);
+    xPosition += cellWidth[0];
+    
+    // Draw Item name cell
+    pdf.text(pdfItem.name, xPosition + 2, yPosition + 8);
+    pdf.rect(xPosition, yPosition, cellWidth[1], cellHeight);
+    xPosition += cellWidth[1];
+    
+    // Draw Image cell
+    if (pdfItem.img) {
+      const imgWidth = 12;
+      const imgHeight = 12;
+      const xCentered = xPosition + (cellWidth[2] - imgWidth) / 2;
+      pdf.addImage(pdfItem.img, 'JPEG', xCentered, yPosition + 2, imgWidth, imgHeight);
+    }
+    pdf.rect(xPosition, yPosition, cellWidth[2], cellHeight);
+    xPosition += cellWidth[2];
+    
+    // Draw Quantity cell
+    pdf.text(pdfItem.stock.toString(), xPosition + cellWidth[3] / 2, yPosition + 8, { align: 'center' });
+    pdf.rect(xPosition, yPosition, cellWidth[3], cellHeight);
+    xPosition += cellWidth[3];
+    
+    // Draw Price cell
+    pdf.text(pdfItem.currentprice.toString(), xPosition + cellWidth[3] / 2, yPosition + 8, { align: 'center' });
+    pdf.rect(xPosition, yPosition, cellWidth[3], cellHeight);
+    xPosition += cellWidth[3];
+    
+    // Draw Amount cell
+    const amount = (pdfItem.stock * pdfItem.currentprice).toString();
+    pdf.text(amount, xPosition + 2, yPosition + 8);
+    pdf.rect(xPosition, yPosition, cellWidth[5], cellHeight);
+    
+    yPosition += cellHeight; // Move to next row for the next product
+  });
+
+  // Add total row
+  if (yPosition + cellHeight > pageHeight - margin) {
+    pdf.addPage();
+    yPosition = margin;
+  }
+  
+  xPosition = margin;
+  
+  // Empty cells for the first 5 columns in the total row
+  for (let i = 0; i < 5; i++) {
+    pdf.rect(xPosition, yPosition, cellWidth[i], cellHeight);
+    xPosition += cellWidth[i];
+  }
+  
+  // Total amount cell
+  pdf.text('Total', xPosition + 16 - cellWidth[5], yPosition + 8);
+  pdf.text(totalAmount.value.toString(), xPosition + 2, yPosition + 8);
+  pdf.rect(xPosition, yPosition, cellWidth[5], cellHeight);
+
+  // Save the generated PDF
+  pdf.save('bill.pdf');
 };
 
+
+
+//////////////////////////////////////////////////////////////////////////////
 const postBillToDatabase = () => {
   const billData = {
     userId: user.value.user_id,

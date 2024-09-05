@@ -20,25 +20,25 @@
                                 <th>Amount</th>
                             </tr>
                             <tr>
-                                <td>{{ bill.bill_id }}</td>
+                                <td class="text-center">{{ bill.bill_id }}</td>
                                 <td>{{ bill.date }}</td>
                                 <td></td>
-                                <td>{{ bill.name }}</td>
+                                <td class="text-center">{{ bill.name }}</td>
                                 <td>{{ bill.total_amount  }}</td>
                             </tr>
                                 <tr class="text-center">
                                 <th>Product ID</th>
-                                <th>Item</th>
+                                <th>Product name</th>
                                 <th></th>
                                 <th>Quantity</th>
                                 <th>Price</th>
                             </tr>
                                 <tr  v-for="product in bill.products" :key="product.id">
                                  
-                                        <td>{{ product?.product_id }}</td>
+                                        <td class="text-center">{{ product?.product_id }}</td>
                                         <td>{{ product?.product_name }}</td>
                                         <td></td>
-                                        <td>{{ product?.quantity }}</td>
+                                        <td class="text-center">{{ product?.quantity }}</td>
                                         <td>{{ product?.price }}</td>
                                
                                 </tr>
@@ -118,48 +118,97 @@ const currentDateTime = ref(new Date().toLocaleString('en-US', {
     second: '2-digit',
     hour12: false,
 }));
-
 const generatePDF = () => {
-  const element = billContent.value;  // The element to convert to PDF
-  const pageWidth = 210; // A4 width in mm
-  const pageHeight = 297; // A4 height in mm
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const margin = 10;
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const columnWidth = {
+    id: 30,
+    item: 80,
+    quantity: 30,
+    price: 30
+  };
+  let yPosition = margin;
 
-  html2canvas(element, {
-    useCORS: true, // Enable cross-origin for images (optional, can be removed if not needed)
-    allowTaint: true, // Allow cross-origin images to be loaded (optional, can be removed if not needed)
-    logging: true,
-  }).then((canvas) => {
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pageWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  // Title and Basic User Info
+  pdf.setFontSize(18);
+  pdf.text('History Bills', pageWidth / 2, yPosition, { align: 'center' });
+  yPosition += 10;
+  
+  pdf.setFontSize(12);
+  pdf.text(`UserID: ${user.value.user_id || 'Unknown'}`, margin, yPosition);
+  yPosition += 6;
+  pdf.text(`User: ${user.value.name || 'Unknown'}`, margin, yPosition);
+  yPosition += 6;
+  pdf.text(`Date: ${currentDateTime.value}`, margin, yPosition);
+  yPosition += 10;
 
-    let position = 0; // Initial Y position for the image
+  // Loop over bills
+  pdf.setFontSize(14);
+  pdf.text('Bills:', margin, yPosition);
+  yPosition += 8;
 
-    // Add pages if needed
-    while (position < imgHeight) {
-      pdf.addImage(imgData, 'PNG', 0, -position, imgWidth, imgHeight);
+  pdf.setFontSize(12);
+  pdf.setLineWidth(0.1);
 
-      // Add a new page if more content remains
-      if (position + pageHeight < imgHeight) {
-        pdf.addPage();
-      }
-
-      position += pageHeight; // Move to the next page
+  pdfbillPreview.value.forEach((bill) => {
+    // Add a new page if the content overflows
+    if (yPosition > 280) {
+      pdf.addPage();
+      yPosition = margin;
     }
 
-    pdf.save('bill.pdf');
-  }).catch((error) => {
-    console.error('Error generating PDF:', error);
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: "Failed to generate PDF.",
-      showConfirmButton: false,
-      timer: 3000
+    // Bill information
+    pdf.text(`Bill ID: ${bill.bill_id}`, margin, yPosition);
+    yPosition += 6;
+    pdf.text(`Date: ${bill.date}`, margin, yPosition);
+    yPosition += 6;
+    pdf.text(`User: ${bill.name}`, margin, yPosition);
+    yPosition += 6;
+    pdf.text(`Total Amount: ${bill.total_amount}`, margin, yPosition);
+    yPosition += 10;
+
+    // Products Table Header
+    pdf.text('Products:', margin, yPosition);
+    yPosition += 6;
+
+    // Table column titles
+    pdf.text('Product-ID', margin + columnWidth.id / 2, yPosition, { align: 'center' });
+    pdf.text('Product-name', margin + margin + columnWidth.id + 2, yPosition);
+    pdf.text('Quantity', margin + columnWidth.id + columnWidth.item + columnWidth.quantity / 2, yPosition, { align: 'center' });
+    pdf.text('Price', margin + columnWidth.id + columnWidth.item + columnWidth.quantity + columnWidth.price / 2, yPosition, { align: 'center' });
+    yPosition += 6;
+
+    // Draw products of the bill
+    bill.products.forEach((product) => {
+      if (yPosition > 280) {
+        pdf.addPage();
+        yPosition = margin;
+      }
+
+      // Product ID
+      pdf.text(product.product_id.toString(), margin + columnWidth.id / 2, yPosition, { align: 'center' });
+      // Item
+      pdf.text(product.product_name, margin + columnWidth.id + 2, yPosition); // Adjust position if necessary
+      // Quantity
+      pdf.text(product.quantity.toString(), margin + columnWidth.id + columnWidth.item + columnWidth.quantity / 2, yPosition, { align: 'center' });
+      // Price
+      pdf.text(product.price.toString(), margin + columnWidth.id + columnWidth.item + columnWidth.quantity + columnWidth.price / 2, yPosition, { align: 'center' });
+      yPosition += 6;
     });
+
+    // Add a divider after each bill
+    pdf.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 10;
   });
+
+  // Save the generated PDF
+  pdf.save('bill.pdf');
 };
+
+
+
+
 
 const clearPdfData = () => {
     // Remove bills from local storage
@@ -183,6 +232,19 @@ const clearPdfData = () => {
         title: "Bills cleared successfully",
         showConfirmButton: false,
         timer: 3000
+    }).then(() => {
+        // Refresh the page
+        window.location.reload();
     });
+
 };
 </script>
+<style scoped>
+.bill-container {
+  width: 210mm;
+  padding: 20px;
+  background: #fff;
+  color: #000;
+}
+
+</style>
