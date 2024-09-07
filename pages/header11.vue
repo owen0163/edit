@@ -64,6 +64,7 @@
           <v-list-item href="/bills">ໃບບິນ</v-list-item>
           <v-list-item href="/history">ປະຫວັດໃບບິນ</v-list-item>
           <v-list-item href="/pdfHistory">ປິ້ນປະຫວັດໃບບິນ</v-list-item>
+          <v-list-item href="/partner">ປະຫວັດ</v-list-item>
         </v-list>
       </v-navigation-drawer>
     </v-layout>
