@@ -12,13 +12,13 @@
             <!-- Start Date selection -->
 
             <!-- <v-select label="Start Date" :items="dateOptions" v-model="startDate" max-width="400" /> -->
-              <v-text-field v-model="startDate" label="Start Date" clearable type="date" solo
-                style="max-width: 400px"  ></v-text-field>
-       <!-- End Date selection -->
+            <v-text-field v-model="startDate" label="Start Date" clearable type="date" solo
+              style="max-width: 400px"></v-text-field>
+            <!-- End Date selection -->
             <!-- <v-select label="End Date" :items="dateOptions" v-model="endDate" max-width="400" /> -->
-              <v-text-field v-model="endDate" label="End Date" clearable type="date" solo
-                style="max-width: 400px" :min="startDate" ></v-text-field>
-    
+            <v-text-field v-model="endDate" label="End Date" clearable type="date" solo style="max-width: 400px"
+              :min="startDate"></v-text-field>
+
           </v-card-text>
 
           <v-card-actions>
@@ -55,9 +55,17 @@
       <v-col cols="12" md="9">
         <v-card class="mt-15">
           <div>
-            <v-card-title>Partner Report</v-card-title>
-            <v-card-subtitle>No: {{ partnerInfoRef.partner_id }}</v-card-subtitle>
-            <v-card-subtitle>Partner: {{ partnerInfoRef.partner_name }}</v-card-subtitle>
+            <v-row>
+              <v-col cols="3">
+                <v-card-title>Partner Report</v-card-title>
+                <v-card-subtitle>No: {{ partnerInfoRef.partner_id }}</v-card-subtitle>
+                <v-card-subtitle>Partner: {{ partnerInfoRef.partner_name }}</v-card-subtitle>
+              </v-col>
+              <v-col cols="8" class="d-flex justify-end">
+                <img width="110" 
+                :src="yourImage" />
+              </v-col>
+            </v-row>
             <v-card-text>
               <v-row justify="space-between">
                 <v-col cols="3" class="bg-yellow-darken-2 text-black pa-3 ml-2">
@@ -134,6 +142,17 @@
                   </tr>
                 </tbody>
               </v-table>
+              <v-card-text>
+            <v-row justify="space-between">
+              <v-col cols="4" class="ml-15">
+                ຜູ້ອອກບິນ
+              </v-col>
+
+              <v-col cols="6" >
+                ຜູ້ຮັບບິນ
+              </v-col>
+            </v-row>
+          </v-card-text>
             </v-card-text>
 
           </div>
@@ -159,7 +178,7 @@ import Header11 from '../header11.vue';
 import { usePartnerStore } from '~/stores/partner';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-
+import yourImage from '@/src/assets/images/vendee.jpg'
 const store = usePartnerStore();
 
 // Reactive state for selected partner, startDate, and endDate
@@ -360,35 +379,46 @@ const totalNetAfterFee = computed(() => {
 ///////////////////PDF//////////////////////////////
 const generatePDF = () => {
   const pdf = new jsPDF('p', 'mm', 'a4');
-  
+
+
+  const imageBase64 = yourImage;
+
   // Margins and settings for the page
   const margin = 10;
   const pageWidth = pdf.internal.pageSize.getWidth();
   let yPosition = margin;
 
+  const imgWidth = 30;  // Adjust width
+  const imgHeight = 30; // Adjust height
+  
+
   // Title of the PDF
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(18);
-  pdf.text('Partner Report', pageWidth / 2, yPosition, { align: 'center' });
+  pdf.text('Partner Report', pageWidth / 22, yPosition,);
   yPosition += 10;
 
   // Partner Info Section
   pdf.setFont('helvetica', 'normal');
   pdf.setFontSize(12);
+  pdf.addImage(imageBase64, 'JPEG', pageWidth - imgWidth - margin, margin -10, imgWidth, imgHeight,);
   pdf.text(`Partner ID: ${partnerInfoRef.value.partner_id || 'Unknown'}`, margin, yPosition);
   yPosition += 6;
   pdf.text(`Partner Name: ${partnerInfoRef.value.partner_name || 'Unknown'}`, margin, yPosition);
-  yPosition += 6;
+  yPosition += 7;
   pdf.text(`Date: ${currentDateTime.value}   ${partnerInfoRef.value.partner_fullname}`, margin, yPosition);
   yPosition += 10;
+
+
+
   // Define Table Headers and Body Rows
   const headers = [
     [
-      { content: 'Date' }, 
-      { content: 'Number of TXNs' }, 
-      { content: 'Total Sale Amount' }, 
-      { content: 'Refund TXN' }, 
-      { content: 'Total Refund' }, 
+      { content: 'Date' },
+      { content: 'Number of TXNs' },
+      { content: 'Total Sale Amount' },
+      { content: 'Refund TXN' },
+      { content: 'Total Refund' },
       { content: 'Remark' }
     ],
   ];
@@ -405,27 +435,27 @@ const generatePDF = () => {
 
   // Add the summary rows after the data
   const summaryRows = [
-  [
-    { content: 'Total Sale', colSpan: 2, styles: { halign: 'right', fillColor: [209, 206, 206] } },
-    { content: totalSaleAmount.value, colSpan: 1, styles: { halign: 'right', fillColor: [209, 206, 206] } },
-  ],
-  [
-    { content: 'Cancel from system Refund', colSpan: 2, styles: { halign: 'right' } },
-    { content: '-' + totalRefund.value, colSpan: 3, styles: { halign: 'right' } },
-  ],
-  [
-    { content: 'Total Sale After Refund', colSpan: 2, styles: { halign: 'right' } },
-    { content: totalSaleAfterRefund.value, colSpan: 3, styles: { halign: 'right' } },
-  ],
-  [
-    { content: 'Transaction fee 2% (2) = (1)*2%', colSpan: 2, styles: { halign: 'right' } },
-    { content: '-' + transactionFee.value, colSpan: 3, styles: { halign: 'right' } },
-  ],
-  [
-    { content: 'Total Net', colSpan: 2, styles: { halign: 'right', fillColor: [209, 206, 206] } },
-    { content: totalNetAfterFee.value, colSpan: 3, styles: { halign: 'right', fillColor: [209, 206, 206] } },
-  ],
-];
+    [
+      { content: 'Total Sale', colSpan: 2, styles: { halign: 'right', fillColor: [209, 206, 206] } },
+      { content: totalSaleAmount.value, colSpan: 1, styles: { halign: 'right', fillColor: [209, 206, 206] } },
+    ],
+    [
+      { content: 'Cancel from system Refund', colSpan: 2, styles: { halign: 'right' } },
+      { content: '-' + totalRefund.value, colSpan: 3, styles: { halign: 'right' } },
+    ],
+    [
+      { content: 'Total Sale After Refund', colSpan: 2, styles: { halign: 'right' } },
+      { content: totalSaleAfterRefund.value, colSpan: 3, styles: { halign: 'right' } },
+    ],
+    [
+      { content: 'Transaction fee 2% (2) = (1)*2%', colSpan: 2, styles: { halign: 'right' } },
+      { content: '-' + transactionFee.value, colSpan: 3, styles: { halign: 'right' } },
+    ],
+    [
+      { content: 'Total Net', colSpan: 2, styles: { halign: 'right', fillColor: [209, 206, 206] } },
+      { content: totalNetAfterFee.value, colSpan: 3, styles: { halign: 'right', fillColor: [209, 206, 206] } },
+    ],
+  ];
 
   // Combine data rows and summary rows into one array
   const fullTableBody = [
@@ -455,6 +485,15 @@ const generatePDF = () => {
     },
     tableLineColor: [23, 13, 13], // Black border color
     tableLineWidth: 0.1,
+    didDrawPage: () => {
+      // Footer text
+      const finalY = pdf.autoTable.previous.finalY;
+      const footerY = finalY + 10; // Position the footer 10mm below the table
+
+      pdf.setFontSize(12);
+      pdf.text('ຜູ້ອອກບິນ',  margin, footerY);
+      pdf.text('ຜູ້ຮັບບິນ', pageWidth / 3, footerY, { align: 'center' });
+    }
   });
 
   // Save the PDF
@@ -471,7 +510,7 @@ const generatePDF = () => {
 export default {
   data() {
     return {
-      menu: false,           
+      menu: false,
     };
   },
 };
