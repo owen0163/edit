@@ -10,9 +10,15 @@
           </v-card-title>
           <v-card-text>
             <!-- Start Date selection -->
-            <v-select label="Start Date" :items="dateOptions" v-model="startDate" max-width="400" />
-            <!-- End Date selection -->
-            <v-select label="End Date" :items="dateOptions" v-model="endDate" max-width="400" />
+
+            <!-- <v-select label="Start Date" :items="dateOptions" v-model="startDate" max-width="400" /> -->
+              <v-text-field v-model="startDate" label="Start Date" clearable type="date" solo
+                style="max-width: 400px"  ></v-text-field>
+       <!-- End Date selection -->
+            <!-- <v-select label="End Date" :items="dateOptions" v-model="endDate" max-width="400" /> -->
+              <v-text-field v-model="endDate" label="End Date" clearable type="date" solo
+                style="max-width: 400px" :min="startDate" ></v-text-field>
+    
           </v-card-text>
 
           <v-card-actions>
@@ -28,23 +34,23 @@
           </v-card-actions>
         </v-card>
         <v-card-actions>
-    <v-row justify="center" class="mt-3">
-      <v-col cols="auto">
-        <div class="text-center">
-          <v-btn variant="elevated" color="blue-darken-1" >
-            print pdf
-          </v-btn>
-        </div>
-      </v-col>
-      <v-col cols="auto">
-        <div class="text-center">
-          <v-btn variant="elevated" color="red" @click="clearLocalStorage">
-            Clear
-          </v-btn>
-        </div>
-      </v-col>
-    </v-row>
-  </v-card-actions>
+          <v-row justify="center" class="mt-3">
+            <v-col cols="auto">
+              <div class="text-center">
+                <v-btn variant="elevated" color="blue-darken-1" @click="generatePDF">
+                  print pdf
+                </v-btn>
+              </div>
+            </v-col>
+            <v-col cols="auto">
+              <div class="text-center">
+                <v-btn variant="elevated" color="red" @click="clearLocalStorage">
+                  Clear
+                </v-btn>
+              </div>
+            </v-col>
+          </v-row>
+        </v-card-actions>
       </v-col>
       <v-col cols="12" md="9">
         <v-card class="mt-15">
@@ -136,7 +142,7 @@
     </v-row>
   </v-container>
 
- 
+
 
   <v-container>
     <v-row>
@@ -151,6 +157,8 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import Header11 from '../header11.vue';
 import { usePartnerStore } from '~/stores/partner';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const store = usePartnerStore();
 
@@ -266,49 +274,207 @@ onMounted(async () => {
 });
 /////////////////////////////////////////////////
 const totalSaleAmount = computed(() => {
-  const total = tableData.value.reduce((total, item) => {
-    return total + parseFloat(item.total_sale_amount) || 0;
+  const total = tableData.value.reduce((sum, item) => {
+    return sum + parseFloat(item.total_sale_amount) || 0;
   }, 0);
-  return new Intl.NumberFormat('en-US').format(total.toFixed(2)); // Format with commas
+  return new Intl.NumberFormat('en-US').format(total.toFixed(2)); // Format when returning
 });
 
 const totalRefund = computed(() => {
-  const total = tableData.value.reduce((total, item) => {
-    return total + parseFloat(item.total_Refund) || 0;
+  const total = tableData.value.reduce((sum, item) => {
+    return sum + parseFloat(item.total_Refund) || 0;
   }, 0);
-  return new Intl.NumberFormat('en-US').format(total.toFixed(2)); // Format with commas
+  return new Intl.NumberFormat('en-US').format(total.toFixed(2)); // Format when returning
 });
 
-
 const totalSaleAfterRefund = computed(() => {
-  const saleAmount = parseFloat(tableData.value.reduce((total, item) => {
-    return total + parseFloat(item.total_sale_amount) || 0;
-  }, 0));
-  
-  const refundAmount = parseFloat(tableData.value.reduce((total, item) => {
-    return total + parseFloat(item.total_Refund) || 0;
-  }, 0));
+  const saleAmount = tableData.value.reduce((sum, item) => {
+    return sum + parseFloat(item.total_sale_amount) || 0;
+  }, 0);
+
+  const refundAmount = tableData.value.reduce((sum, item) => {
+    return sum + parseFloat(item.total_Refund) || 0;
+  }, 0);
 
   const netAmount = saleAmount - refundAmount;
-  return new Intl.NumberFormat('en-US').format(netAmount.toFixed(2)); // Format with commas
+  return new Intl.NumberFormat('en-US').format(netAmount.toFixed(2)); // Format when returning
 });
 
 const transactionFee = computed(() => {
-  const saleAmount = parseFloat(tableData.value.reduce((total, item) => {
-    return total + parseFloat(item.total_sale_amount) || 0;
-  }, 0));
-  
+  const saleAmount = tableData.value.reduce((sum, item) => {
+    return sum + parseFloat(item.total_sale_amount) || 0;
+  }, 0);
+
   const fee = saleAmount * 0.02; // 2% of total sale amount
-  return new Intl.NumberFormat('en-US').format(fee.toFixed(2)); // Format with commas
+  return new Intl.NumberFormat('en-US').format(fee.toFixed(2)); // Format when returning
 });
 
 const totalNetAfterFee = computed(() => {
-  const totalAfterRefund = parseFloat(totalSaleAfterRefund.value.replace(/,/g, '')) || 0;
-  const fee = parseFloat(transactionFee.value.replace(/,/g, '')) || 0;
-  return new Intl.NumberFormat('en-US').format((totalAfterRefund - fee).toFixed(2));
+  const totalAfterRefund = parseFloat(totalSaleAfterRefund.value.replace(/,/g, '')) || 0; // Use unformatted number for calculation
+  const fee = parseFloat(transactionFee.value.replace(/,/g, '')) || 0; // Use unformatted number for calculation
+  const netAfterFee = totalAfterRefund - fee;
+  return new Intl.NumberFormat('en-US').format(netAfterFee.toFixed(2)); // Format when returning
 });
+// const totalSaleAmount = computed(() => {
+//   const total = tableData.value.reduce((total, item) => {
+//     return total + parseFloat(item.total_sale_amount) || 0;
+//   }, 0);
+//   return total.toFixed(2); // Return raw number, not formatted
+// });
 
+// const totalRefund = computed(() => {
+//   const total = tableData.value.reduce((total, item) => {
+//     return total + parseFloat(item.total_Refund) || 0;
+//   }, 0);
+//   return total.toFixed(2); // Return raw number, not formatted
+// });
+
+// const totalSaleAfterRefund = computed(() => {
+//   const saleAmount = tableData.value.reduce((total, item) => {
+//     return total + parseFloat(item.total_sale_amount) || 0;
+//   }, 0);
+
+//   const refundAmount = tableData.value.reduce((total, item) => {
+//     return total + parseFloat(item.total_Refund) || 0;
+//   }, 0);
+
+//   const netAmount = saleAmount - refundAmount;
+//   return netAmount.toFixed(2); // Return raw number, not formatted
+// });
+
+// const transactionFee = computed(() => {
+//   const saleAmount = tableData.value.reduce((total, item) => {
+//     return total + parseFloat(item.total_sale_amount) || 0;
+//   }, 0);
+
+//   const fee = saleAmount * 0.02; // 2% of total sale amount
+//   return fee.toFixed(2); // Return raw number, not formatted
+// });
+
+// const totalNetAfterFee = computed(() => {
+//   const totalAfterRefund = parseFloat(totalSaleAfterRefund.value) || 0; // Note: Using raw numbers now
+//   const fee = parseFloat(transactionFee.value) || 0; // Using raw numbers now
+//   return (totalAfterRefund - fee).toFixed(2); // Compute and return a raw number
+// });
 /////////////////////////////////////////////////////
+///////////////////PDF//////////////////////////////
+const generatePDF = () => {
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  
+  // Margins and settings for the page
+  const margin = 10;
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  let yPosition = margin;
+
+  // Title of the PDF
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(18);
+  pdf.text('Partner Report', pageWidth / 2, yPosition, { align: 'center' });
+  yPosition += 10;
+
+  // Partner Info Section
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(12);
+  pdf.text(`Partner ID: ${partnerInfoRef.value.partner_id || 'Unknown'}`, margin, yPosition);
+  yPosition += 6;
+  pdf.text(`Partner Name: ${partnerInfoRef.value.partner_name || 'Unknown'}`, margin, yPosition);
+  yPosition += 6;
+  pdf.text(`Date: ${currentDateTime.value}   ${partnerInfoRef.value.partner_fullname}`, margin, yPosition);
+  yPosition += 10;
+  // Define Table Headers and Body Rows
+  const headers = [
+    [
+      { content: 'Date' }, 
+      { content: 'Number of TXNs' }, 
+      { content: 'Total Sale Amount' }, 
+      { content: 'Refund TXN' }, 
+      { content: 'Total Refund' }, 
+      { content: 'Remark' }
+    ],
+  ];
+
+  // Main data rows for the table (example data)
+  const body = tableData.value.map(item => [
+    { content: item.date, styles: { halign: 'center' } },
+    { content: item.number_TXN.toString(), styles: { halign: 'center' } },
+    { content: new Intl.NumberFormat('en-US').format(item.total_sale_amount), styles: { halign: 'right' } },
+    { content: item.refund_TXN.toString(), styles: { halign: 'center' } },
+    { content: new Intl.NumberFormat('en-US').format(item.total_Refund), styles: { halign: 'right' } },
+    { content: '', styles: { halign: 'center' } }  // Empty remark cell
+  ]);
+
+  // Add the summary rows after the data
+  const summaryRows = [
+  [
+    { content: 'Total Sale', colSpan: 2, styles: { halign: 'right', fillColor: [209, 206, 206] } },
+    { content: totalSaleAmount.value, colSpan: 1, styles: { halign: 'right', fillColor: [209, 206, 206] } },
+  ],
+  [
+    { content: 'Cancel from system Refund', colSpan: 2, styles: { halign: 'right' } },
+    { content: '-' + totalRefund.value, colSpan: 3, styles: { halign: 'right' } },
+  ],
+  [
+    { content: 'Total Sale After Refund', colSpan: 2, styles: { halign: 'right' } },
+    { content: totalSaleAfterRefund.value, colSpan: 3, styles: { halign: 'right' } },
+  ],
+  [
+    { content: 'Transaction fee 2% (2) = (1)*2%', colSpan: 2, styles: { halign: 'right' } },
+    { content: '-' + transactionFee.value, colSpan: 3, styles: { halign: 'right' } },
+  ],
+  [
+    { content: 'Total Net', colSpan: 2, styles: { halign: 'right', fillColor: [209, 206, 206] } },
+    { content: totalNetAfterFee.value, colSpan: 3, styles: { halign: 'right', fillColor: [209, 206, 206] } },
+  ],
+];
+
+  // Combine data rows and summary rows into one array
+  const fullTableBody = [
+    ...body,
+    ...summaryRows
+  ];
+
+  // Generate a single table with data and summary at the bottom
+  autoTable(pdf, {
+    startY: yPosition,
+    head: headers,
+    body: fullTableBody,
+    styles: {
+      fontSize: 10,
+      cellPadding: 3,
+      halign: 'center',
+      valign: 'middle',
+    },
+    headStyles: {
+      fillColor: [209, 206, 206],  // Light gray background for the headers
+      textColor: [0, 0, 0],        // Black text
+      halign: 'center'
+    },
+    bodyStyles: {
+      lineWidth: 0.1,
+      textColor: [0, 0, 0]
+    },
+    tableLineColor: [23, 13, 13], // Black border color
+    tableLineWidth: 0.1,
+  });
+
+  // Save the PDF
+  pdf.save('partner-report.pdf');
+};
+////////////////////////////////////////
+
+// Watch startDate and adjust endDate if necessary
+
+</script>
+
+
+<script>
+export default {
+  data() {
+    return {
+      menu: false,           
+    };
+  },
+};
 </script>
 
 
@@ -326,7 +492,7 @@ const totalNetAfterFee = computed(() => {
   /* Adjust font size */
   padding: 8px;
   /* Adjust padding */
-  
+
 }
 
 .custom-table th {

@@ -15,8 +15,10 @@
     "axios": "^1.7.2",
     "cookie-universal-nuxt": "^2.2.2",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.3",
     "jwt-decode": "^4.0.0",
     "nuxt": "^3.12.3",
+    "nuxt-vuetify": "^1.0.1",
     "pinia": "^2.1.7",
     "sweetalert2": "^11.12.4",
     "vue": "latest",
@@ -25,7 +27,7 @@
   },
   "devDependencies": {
     "sass": "^1.77.8",
-    "vite-plugin-vuetify": "^2.0.3",
-    "vuetify": "^3.6.12"
+    "vite-plugin-vuetify": "^2.0.4",
+    "vuetify": "^3.7.1"
   }
 }
