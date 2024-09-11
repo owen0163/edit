@@ -64,10 +64,7 @@ const submitForm = async () => {
   try {
     await authStore.login(email.value, password.value);
     successMessage.value = 'Login successful!';
-    
-    setTimeout(() => {
-      router.push('/products'); // Redirect to products page immediately
-    }, 0);
+    router.push('/products');
   } catch (err) {
     error.value = 'Login failed. Please check Email or password';
   }

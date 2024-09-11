@@ -4,10 +4,7 @@ import { useCookie } from '#app';
 
 export default defineNuxtRouteMiddleware((to, from) => {
   const authStore = useAuthStore();
-  const tokenCookie = useCookie('token');
-
-  console.log('Token from authStore:', authStore.token);
-  console.log('Token from cookie:', tokenCookie.value);
+  const tokenCookie = useCookie('user');
 
   const token = authStore.token || tokenCookie.value;
 
