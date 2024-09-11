@@ -245,6 +245,9 @@ app.post('/api/login', async (req, res) => {
       secure: true,
       sameSite: 'none',
     });
+    // Example in an Express.js route
+    
+
       res.send({ message:"Login successful", user: { email: user.email, name: user.name, user_id: user.user_id } });
   } catch (error) {
     console.error('Error logging in user:', error);

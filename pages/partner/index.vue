@@ -179,6 +179,13 @@ import { usePartnerStore } from '~/stores/partner';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import yourImage from '@/src/assets/images/vendee.jpg'
+
+
+definePageMeta({
+  middleware: 'auth'
+});
+
+
 const store = usePartnerStore();
 
 // Reactive state for selected partner, startDate, and endDate

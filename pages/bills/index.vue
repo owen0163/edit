@@ -91,6 +91,10 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'sweetalert2/src/sweetalert2.scss';
 import { useRouter } from 'vue-router';
 
+definePageMeta({
+  middleware: 'auth'
+});
+
 const router = useRouter();
 const pdfStore = usePdf();
 const products = useProductStore();

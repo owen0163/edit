@@ -8,16 +8,15 @@
               <div class="text-center text-h4">Login</div>
             </v-card-title>
             <v-form v-model="formValid" ref="form">
-              
-              <v-text-field  class="mr-2 ml-2 " v-model="email" :rules="emailRules" label="Email" required
+
+              <v-text-field class="mr-2 ml-2 " v-model="email" :rules="emailRules" label="Email" required
                 type="email"></v-text-field>
               <v-text-field class="mr-2 ml-2" v-model="password" :rules="passwordRules" label="Password" type="password"
                 required></v-text-field>
-              <v-col class="text-center">    
-                  <v-btn @click="submitForm" :disabled="!formValid"
-                    color="primary">
-                    Login
-                  </v-btn>
+              <v-col class="text-center">
+                <v-btn @click="submitForm" :disabled="!formValid" color="primary">
+                  Login
+                </v-btn>
               </v-col>
               <v-alert v-if="error" type="error">
                 {{ error }}
@@ -37,6 +36,7 @@
 import { ref } from 'vue';
 import { useRouter } from '#app';
 import { useAuthStore } from '~/stores/auth';
+
 
 const email = ref('');
 const password = ref('');
@@ -64,11 +64,13 @@ const submitForm = async () => {
   try {
     await authStore.login(email.value, password.value);
     successMessage.value = 'Login successful!';
+    
     setTimeout(() => {
-      router.push('/products'); // Redirect to products page after a short delay
-    }, 2000);
+      router.push('/products'); // Redirect to products page immediately
+    }, 0);
   } catch (err) {
     error.value = 'Login failed. Please check Email or password';
   }
 };
+
 </script>

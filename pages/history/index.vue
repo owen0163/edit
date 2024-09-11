@@ -77,6 +77,10 @@ import { usePdfHistory } from '~/stores/pdfHistory';
 const pdfHistoryStore = usePdfHistory();
 const billStore = useBillHistory();
 
+definePageMeta({
+  middleware: 'auth'
+});
+
 onMounted(() => {
   billStore.fetchBills();
   console.log(billStore.billsHistory); // Log billsHistory to check if username is present

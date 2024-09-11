@@ -1,3 +1,4 @@
+
 import { defineStore } from 'pinia';
 import { useNuxtApp } from '#app';
 import axios from 'axios';
@@ -61,6 +62,8 @@ export const useAuthStore = defineStore('auth', {
       this.token = null;
       this.user = null;
     },
-    
+    isAuthenticated() {
+      return !!this.token; // Simple check for token presence
+    },
   },
 });

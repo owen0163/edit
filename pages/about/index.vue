@@ -133,7 +133,9 @@ const products = useProductStore();
 const selectedProduct = ref(null);
 const selectedProductId = ref(null);
 
-
+definePageMeta({
+  middleware: 'auth'
+});
 
 onMounted(async () => {
   await products.fetchProducts();

@@ -51,6 +51,10 @@ import Header11 from '../header11.vue';
 const productStore = useProductStore();
 const router = useRouter();
 
+definePageMeta({
+  middleware: 'auth'
+});
+
 const product = ref({
     name: '',
     defaultprice: 0,

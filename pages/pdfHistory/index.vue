@@ -87,6 +87,11 @@ import { usePdfHistory } from '~/stores/pdfHistory';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
+
+definePageMeta({
+  middleware: 'auth'
+});
+
 const user = ref({ email: '', name: '' });
 const pdfHistoryStore = usePdfHistory();
 const billContent = ref(null);
