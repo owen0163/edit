@@ -1,41 +1,73 @@
 <template>
-  <v-container>
-    <v-row justify="center">
-      <v-col cols="13" md="6" lg="2" class=" mt-50px" v-for="product in products.products" :key="product.id">
-        <div>
-          <v-card class="mx-auto mt-50px" max-width="344">
-
-            <v-img height="250px" :src="product.image" cover></v-img>
+  <v-parallax src="https://wallpapercave.com/wp/wp3525740.png">
+    <v-container>
+      <v-row justify="center">
+        <v-col cols="12" md="6">
+          <v-card>
             <v-card-title>
-              {{ product.name }}
+              <div class="text-center text-h4">Login</div>
             </v-card-title>
-         
-            <v-card-text>
-              <div> product in stock : {{ product.stock }}</div>
-              <div>currentPrice : {{ product.currentPrice }}</div>
-            </v-card-text>
-            <v-card-actions class="d-flex justify-center"><v-btn variant="elevated" size="x-large"
-                color="orange-darken-3">
-                ລາຍລະອຽດ ສິນຄ້າ
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </div>
-      </v-col>
-    </v-row>
-  </v-container>
+            <v-form v-model="formValid" ref="form">
 
+              <v-text-field class="mr-2 ml-2 " v-model="email" :rules="emailRules" label="Email" required
+                type="email"></v-text-field>
+              <v-text-field class="mr-2 ml-2" v-model="password" :rules="passwordRules" label="Password" type="password"
+                required></v-text-field>
+              <v-col class="text-center">
+                <v-btn @click="submitForm" :disabled="!formValid" color="primary">
+                  Login
+                </v-btn>
+              </v-col>
+              <v-alert v-if="error" type="error">
+                {{ error }}
+              </v-alert>
+              <v-alert v-if="successMessage" type="success">
+                {{ successMessage }}
+              </v-alert>
+            </v-form>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-parallax>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useProductStore } from '~/stores/pinia';
+import { ref } from 'vue';
+import { useRouter } from '#app';
+import { useAuthStore } from '~/stores/auth';
 
-const products = useProductStore()
 
-onMounted(async () => {
-  await products.fetchProducts()
-  console.log(products.products)
-})
+const email = ref('');
+const password = ref('');
+const formValid = ref(false);
+const error = ref('');
+const successMessage = ref('');
+
+const emailRules = [
+  v => !!v || 'Email is required',
+  v => /.+@.+\..+/.test(v) || 'Please input Email',
+];
+
+const passwordRules = [
+  v => !!v || 'Password is required',
+  v => v.length >= 6 || 'Please input Password ',
+];
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+const submitForm = async () => {
+  error.value = '';
+  successMessage.value = '';
+
+  try {
+    await authStore.login(email.value, password.value);
+    successMessage.value = 'Login successful!';
+    router.push('/products');
+  } catch (err) {
+    error.value = 'Login failed. Please check Email or password';
+  }
+};
 
 </script>

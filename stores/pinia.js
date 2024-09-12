@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
+
+
 export const useProductStore = defineStore('Product', {
   state: () => ({
     products: [],
@@ -9,7 +11,7 @@ export const useProductStore = defineStore('Product', {
   actions: {
     async fetchProducts() {
       try {
-        const response = await axios.get('https://b8fc17f5-f052-43d4-aca5-a3ba283991d5-00-33ml6ruwudc9l.sisko.replit.dev/products');
+        const response = await axios.get('http://localhost:3300/products');
         this.products = response.data;
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -17,7 +19,7 @@ export const useProductStore = defineStore('Product', {
     },
     async fetchProductById(id) {
       try {
-        const response = await axios.get(`https://b8fc17f5-f052-43d4-aca5-a3ba283991d5-00-33ml6ruwudc9l.sisko.replit.dev/products/${id}`);
+        const response = await axios.get(`http://localhost:3300/products/${id}`);
         this.product = response.data;
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -25,16 +27,35 @@ export const useProductStore = defineStore('Product', {
     },
     async updateProduct(id, updatedProduct) {
       try {
-        console.log('Updating product with ID:', id);
-        const response = await axios.put(`https://b8fc17f5-f052-43d4-aca5-a3ba283991d5-00-33ml6ruwudc9l.sisko.replit.dev/products/${id}`, updatedProduct);
-        console.log('Product updated response:', response.data);
+        const response = await axios.put(`http://localhost:3300/products/${id}`, updatedProduct);
         await this.fetchProducts();
+      
       } catch (error) {
         console.error('Error updating product:', error);
         throw error;
       }
     },
-
+    
+    async addProduct(product) {
+      try {
+        const response = await axios.post('http://localhost:3300/products', product);
+        // Optionally, you can fetch products here if needed
+        this.fetchProducts(); // Assuming you have a fetchProducts method
+        return response.data;
+      } catch (error) {
+        console.error('Error adding product:', error);
+        throw error;
+      }
+  },
+  async removeProduct(id) {
+    try {
+      await axios.delete(`http://localhost:3300/products/${id}`);
+      await this.fetchProducts();
+    } catch (error) {
+      console.error('Error deleting product:', error.response?.data || error.message);
+      alert(`Error: ${error.response?.data?.message || error.message}`);
+    }
   },
 
+  },
 });
