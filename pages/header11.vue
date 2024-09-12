@@ -5,56 +5,51 @@
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title>
           <v-btn href="/products">Vendee</v-btn>
-       
-            <v-btn class="text-none" stacked href="/bills">
-              <v-badge color="error" :content="pdfCount" >
-                <v-icon size="large">mdi-cart</v-icon>
-              </v-badge>
-            </v-btn>
-  
+
+          <v-btn class="text-none" stacked href="/bills">
+            <v-badge color="error" :content="pdfCount">
+              <v-icon size="large">mdi-cart</v-icon>
+            </v-badge>
+          </v-btn>
+
 
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <div class="text-center">
-          <v-menu v-model="menu" :close-on-content-click="false">
-            <template v-slot:activator="{ props }" class="mr-4">
-              <v-btn color="grey-lighten-5" v-bind="props">
-                <v-icon size="25px" class="mdi mdi-account-box mr-1"></v-icon>
-                {{ user.name }}
+        <!-- /////////////////////////////////////////////////////////////////////////////////// -->
+        <div class="mr-2">
+          <v-menu min-width="200px" rounded>
+            <template v-slot:activator="{ props }">
+              <v-btn icon v-bind="props">
+                <v-avatar color="info" size="large">
+                  <span class="text-subtitle-1">{{ user.name }}</span>
+                </v-avatar>
               </v-btn>
             </template>
-            <v-card min-width="300">
-              <v-list v-if="user">
-                <v-list-item>
-                  <v-list-item-title>
-                    <v-icon size="25px" class="mdi mdi-email"></v-icon>
+            <v-card>
+              <v-card-text>
+                <div class="mx-auto text-center">
+                  <v-avatar color="info">
+                    <span>{{ user.name }}</span>
+                  </v-avatar>
+                  <h3>{{ user.name }}</h3>
+                  <p class="text-caption mt-1">
                     {{ user.email }}
-                  </v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title>
-                    <v-icon size="25px" class="mdi mdi-account"></v-icon>
-                    {{ user.name }}
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-              <v-divider></v-divider>
-              <v-list>
-                <v-list-item>
-                  <!-- Additional list items -->
-                </v-list-item>
-              </v-list>
-              <v-card-actions>
-                <v-col class="text-center">
-                  <v-btn color="primary" variant="outlined" @click="handleLogout">
-                    <v-icon size="25px" class="mdi mdi-account-arrow-right"></v-icon>
-                    Logout
+                  </p>
+                  <v-divider class="my-3"></v-divider>
+                  <v-btn variant="text" rounded>
+                    Edit Account
                   </v-btn>
-                </v-col>
-              </v-card-actions>
+                  <v-divider class="my-3"></v-divider>
+                  <v-btn variant="text" rounded @click="handleLogout">
+                    <v-icon size="25px" class="mdi mdi-account-arrow-right"></v-icon>
+                    Disconnect
+                  </v-btn>
+                </div>
+              </v-card-text>
             </v-card>
           </v-menu>
         </div>
+        <!-- //////////////////////////////////////////////////////////////////////////////////// -->
       </v-app-bar>
       <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'bottom' : undefined" temporary>
         <v-list>
@@ -86,6 +81,10 @@ const menu = ref(false);
 const drawer = ref(false);
 const pdfStore = usePdf();
 const pdfCount = ref(0);
+
+definePageMeta({
+  middleware: 'auth'
+});
 
 // Watch effect to update pdfCount on client side
 watchEffect(() => {
