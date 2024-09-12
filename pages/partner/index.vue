@@ -492,15 +492,15 @@ const generatePDF = () => {
     },
     tableLineColor: [23, 13, 13], // Black border color
     tableLineWidth: 0.1,
-    didDrawPage: () => {
-      // Footer text
-      const finalY = pdf.autoTable.previous.finalY;
-      const footerY = finalY + 10; // Position the footer 10mm below the table
+    // didDrawPage: () => {
+    //   // Footer text
+    //   const finalY = pdf.autoTable.previous.finalY;
+    //   const footerY = finalY + 10; // Position the footer 10mm below the table
 
-      pdf.setFontSize(12);
-      pdf.text('ຜູ້ອອກບິນ',  margin, footerY);
-      pdf.text('ຜູ້ຮັບບິນ', pageWidth / 3, footerY, { align: 'center' });
-    }
+    //   pdf.setFontSize(12);
+    //   pdf.text('ຜູ້ອອກບິນ',  margin, footerY);
+    //   pdf.text('ຜູ້ຮັບບິນ', pageWidth / 3, footerY, { align: 'center' });
+    // }
   });
 
   // Save the PDF
