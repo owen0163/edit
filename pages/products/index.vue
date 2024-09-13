@@ -1,12 +1,13 @@
 <template>
+  <v-app>
+        <v-container fluid class="fill-height pa-0">
+            <v-img src="https://wallpapers.com/images/hd/hd-orange-wavelength-art-fbcwek67vdsjxlgv.jpg" class="fill-height" cover>
   <v-container>
     <v-row justify="center">
-      <v-col cols="12" md="6" lg="2" v-for="product in products.products" :key="product.id">
+          <v-col cols="8"  lg="2" v-for="product in products.products" :key="product.id">
         <v-card class="mx-auto mt-50px mt-15" max-width="300">
           <div class="d-flex justify-center">
-            <v-col lg="12">
-              <v-img :height="200" :width="200" :src="product.image" cover></v-img>
-            </v-col>
+              <v-img :height="180" :src="product.image" cover></v-img>
           </div>
           <v-card-title>{{ product.name }}</v-card-title>
           <v-card-text>
@@ -46,11 +47,13 @@
               </template>
             </v-dialog>
           </v-card-actions>
-        </v-card>
+        </v-card>      
       </v-col>
     </v-row>
   </v-container>
-
+</v-img>
+        </v-container>
+    </v-app>
   <v-container>
     <v-row>
       <v-col>
@@ -121,3 +124,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.fill-height {
+  height: 100vh; /* Full screen height */
+}
+</style>

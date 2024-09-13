@@ -1,74 +1,82 @@
 <template>
-  <v-container class="bill-container">
-    <v-card outlined class="mt-15">
-      <div ref="billContent">
-        <v-card-title class="text-center">bill</v-card-title>
-        <v-card-subtitle>UserID: {{ user.user_id || 'Unknown' }}</v-card-subtitle>
-        <v-card-subtitle>User: {{ user?.name || 'Unknown' }}</v-card-subtitle>
-        <v-card-subtitle>Date: {{ currentDateTime }}</v-card-subtitle>
+  <v-app>
+    <v-container fluid class="fill-height pa-0">
+      <v-img
+        src="https://static.vecteezy.com/ti/gratis-vektor/p1/24596331-hintergrund-design-mit-orange-farbe-geeignet-zum-4k-auflosung-vektor.jpg"
+        class="fill-height" cover>
+        <v-container class="bill-container">
+          <v-card outlined class="mt-15">
+            <div ref="billContent">
+              <v-card-title class="text-center">bill</v-card-title>
+              <v-card-subtitle>UserID: {{ user.user_id || 'Unknown' }}</v-card-subtitle>
+              <v-card-subtitle>User: {{ user?.name || 'Unknown' }}</v-card-subtitle>
+              <v-card-subtitle>Date: {{ currentDateTime }}</v-card-subtitle>
 
-        <v-card-text>
-          <v-table>
-            <thead>
-              <tr class="text-center">
-                <th>ID</th>
-                <th>Item</th>
-                <th>Image</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Amount</th>
+              <v-card-text>
+                <v-table>
+                  <thead>
+                    <tr class="text-center">
+                      <th>ID</th>
+                      <th>Item</th>
+                      <th>Image</th>
+                      <th>Quantity</th>
+                      <th>Price</th>
+                      <th>Amount</th>
 
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(pdf, index) in pdfOrder" :key="index">
-                <td>{{ pdf.id }}</td>
-                <td>{{ pdf.name }}</td>
-                <td>
-                  <img :src="pdf.img" alt="Product Image" style="width: 50px; height: 50px; object-fit: cover;"
-                    @load="onImageLoad" @error="onImageError" />
-                </td>
-                <td>
-                  <v-text-field v-model="pdf.stock" type="number" class="ml-4" variant="plain"
-                    style="max-width: 70px; font-size: 12px; padding: 0 10px;"
-                    @keydown.enter="checkAndSaveStock(pdf)"></v-text-field>
-                </td>
-                <td>{{ pdf.currentprice }}</td>
-                <td>{{ pdf.stock * pdf.currentprice }}</td>
-              </tr>
-              <tr>
-                <td>Total</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>{{ totalAmount }}</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(pdf, index) in pdfOrder" :key="index">
+                      <td>{{ pdf.id }}</td>
+                      <td>{{ pdf.name }}</td>
+                      <td>
+                        <img :src="pdf.img" alt="Product Image" style="width: 50px; height: 50px; object-fit: cover;"
+                          @load="onImageLoad" @error="onImageError" />
+                      </td>
+                      <td>
+                        <v-text-field v-model="pdf.stock" type="number" class="ml-4" variant="plain"
+                          style="max-width: 70px; font-size: 12px; padding: 0 10px;"
+                          @keydown.enter="checkAndSaveStock(pdf)"></v-text-field>
+                      </td>
+                      <td>{{ pdf.currentprice }}</td>
+                      <td>{{ pdf.stock * pdf.currentprice }}</td>
+                    </tr>
+                    <tr>
+                      <td>Total</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>{{ totalAmount }}</td>
 
-              </tr>
-            </tbody>
-          </v-table>
-          <v-card-text>
-            <v-row justify="space-between">
-              <v-col cols="3">
-                ຜູ້ອອກເຄື່ອງ
-              </v-col>
+                    </tr>
+                  </tbody>
+                </v-table>
+                <v-card-text>
+                  <v-row justify="space-between">
+                    <v-col cols="3">
+                      ຜູ້ອອກເຄື່ອງ
+                    </v-col>
 
-              <v-col class="text-left">
-                ຜູ້ຮັບເຄື່ອງ
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card-text>
-      </div>
-    </v-card>
-    <v-card-actions class="d-flex justify-center">
-      <v-btn variant="flat" color="primary" @click="generatePDFAndPostBill">bill</v-btn>
-      <v-btn variant="elevated" color="red-darken-2" @click="clearPdfData">
-        ລືບ
-      </v-btn>
-    </v-card-actions>
-  </v-container>
-
+                    <v-col class="text-left">
+                      ຜູ້ຮັບເຄື່ອງ
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card-text>
+            </div>
+          </v-card>
+          <v-card-actions class="d-flex justify-center">
+            <v-btn variant="flat" color="primary" @click="generatePDFAndPostBill">bill</v-btn>
+            <v-btn variant="elevated" color="red-darken-2" @click="clearPdfData">
+              ລືບ
+            </v-btn>
+          </v-card-actions>
+        </v-container>
+      </v-img>
+    </v-container>
+  </v-app>
+  
   <v-container>
     <v-row>
       <v-col>
@@ -173,12 +181,12 @@ const generatePDF = () => {
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   let yPosition = margin;
-  
+
   // Title and Basic User Info
   pdf.setFontSize(18);
   pdf.text('Bill', pageWidth / 2, yPosition, { align: 'center' });
   yPosition += 10;
-  
+
   pdf.setFontSize(12);
   pdf.text(`UserID: ${user.value.user_id || 'Unknown'}`, margin, yPosition);
   yPosition += 6;
@@ -210,19 +218,19 @@ const generatePDF = () => {
       pdf.addPage();
       yPosition = margin;
     }
-    
+
     xPosition = margin;
-    
+
     // Draw ID cell
-    pdf.text(pdfItem.id.toString(), xPosition + 10, yPosition + 8,{ align: 'center' } );
+    pdf.text(pdfItem.id.toString(), xPosition + 10, yPosition + 8, { align: 'center' });
     pdf.rect(xPosition, yPosition, cellWidth[0], cellHeight);
     xPosition += cellWidth[0];
-    
+
     // Draw Item name cell
     pdf.text(pdfItem.name, xPosition + 2, yPosition + 8);
     pdf.rect(xPosition, yPosition, cellWidth[1], cellHeight);
     xPosition += cellWidth[1];
-    
+
     // Draw Image cell
     if (pdfItem.img) {
       const imgWidth = 12;
@@ -232,22 +240,22 @@ const generatePDF = () => {
     }
     pdf.rect(xPosition, yPosition, cellWidth[2], cellHeight);
     xPosition += cellWidth[2];
-    
+
     // Draw Quantity cell
     pdf.text(pdfItem.stock.toString(), xPosition + cellWidth[3] / 2, yPosition + 8, { align: 'center' });
     pdf.rect(xPosition, yPosition, cellWidth[3], cellHeight);
     xPosition += cellWidth[3];
-    
+
     // Draw Price cell
     pdf.text(pdfItem.currentprice.toString(), xPosition + cellWidth[3] / 2, yPosition + 8, { align: 'center' });
     pdf.rect(xPosition, yPosition, cellWidth[3], cellHeight);
     xPosition += cellWidth[3];
-    
+
     // Draw Amount cell
     const amount = (pdfItem.stock * pdfItem.currentprice).toString();
     pdf.text(amount, xPosition + 2, yPosition + 8);
     pdf.rect(xPosition, yPosition, cellWidth[5], cellHeight);
-    
+
     yPosition += cellHeight; // Move to next row for the next product
   });
 
@@ -256,15 +264,15 @@ const generatePDF = () => {
     pdf.addPage();
     yPosition = margin;
   }
-  
+
   xPosition = margin;
-  
+
   // Empty cells for the first 5 columns in the total row
   for (let i = 0; i < 5; i++) {
     pdf.rect(xPosition, yPosition, cellWidth[i], cellHeight);
     xPosition += cellWidth[i];
   }
-  
+
   // Total amount cell
   pdf.text('Total', xPosition + 16 - cellWidth[5], yPosition + 8);
   pdf.text(totalAmount.value.toString(), xPosition + 2, yPosition + 8);
@@ -311,8 +319,6 @@ const generatePDFAndPostBill = () => {
 };
 </script>
 
-
-
 <style scoped>
 .bill-container {
   width: 210mm;
@@ -331,5 +337,10 @@ td {
   border: 1px solid #000;
   padding: 8px;
   text-align: left;
+}
+
+.fill-height {
+  height: 100vh;
+  /* Full screen height */
 }
 </style>

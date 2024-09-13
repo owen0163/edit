@@ -1,166 +1,173 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="10" md="3">
-        <v-card class="mt-15" max-width="350">
-          <v-card-title>
-            <!-- Autocomplete for selecting a partner -->
-            <v-autocomplete label="Partner" :items="store.partners" item-value="partner_id" item-title="partner_name"
-              v-model="selectedPartnerId" @change="onPartnerChange" variant="underlined"></v-autocomplete>
-          </v-card-title>
-          <v-card-text>
-            <!-- Start Date selection -->
+  <v-app>
+    <v-container fluid class="fill-height pa-0">
+      <v-img
+        src="https://static.vecteezy.com/ti/gratis-vektor/p1/24596331-hintergrund-design-mit-orange-farbe-geeignet-zum-4k-auflosung-vektor.jpg"
+        class="fill-height" cover>
+        <v-container>
+          <v-row>
+            <v-col cols="10" md="3">
+              <v-card class="mt-15" max-width="350">
+                <v-card-title>
+                  <!-- Autocomplete for selecting a partner -->
+                  <v-autocomplete label="Partner" :items="store.partners" item-value="partner_id"
+                    item-title="partner_name" v-model="selectedPartnerId" @change="onPartnerChange"
+                    variant="underlined"></v-autocomplete>
+                </v-card-title>
+                <v-card-text>
+                  <!-- Start Date selection -->
 
-            <!-- <v-select label="Start Date" :items="dateOptions" v-model="startDate" max-width="400" /> -->
-            <v-text-field v-model="startDate" label="Start Date" clearable type="date" solo
-              style="max-width: 400px"></v-text-field>
-            <!-- End Date selection -->
-            <!-- <v-select label="End Date" :items="dateOptions" v-model="endDate" max-width="400" /> -->
-            <v-text-field v-model="endDate" label="End Date" clearable type="date" solo style="max-width: 400px"
-              :min="startDate"></v-text-field>
+                  <!-- <v-select label="Start Date" :items="dateOptions" v-model="startDate" max-width="400" /> -->
+                  <v-text-field v-model="startDate" label="Start Date" clearable type="date" solo
+                    style="max-width: 400px"></v-text-field>
+                  <!-- End Date selection -->
+                  <!-- <v-select label="End Date" :items="dateOptions" v-model="endDate" max-width="400" /> -->
+                  <v-text-field v-model="endDate" label="End Date" clearable type="date" solo style="max-width: 400px"
+                    :min="startDate"></v-text-field>
 
-          </v-card-text>
+                </v-card-text>
 
-          <v-card-actions>
-            <v-row justify="center" class="w-100">
-              <v-col cols="auto">
-                <div class="text-center">
-                  <v-btn variant="elevated" color="blue-accent-3" @click="fetchData">
-                    Fetch Data
-                  </v-btn>
-                </div>
-              </v-col>
-            </v-row>
-          </v-card-actions>
-        </v-card>
-        <v-card-actions>
-          <v-row justify="center" class="mt-3">
-            <v-col cols="auto">
-              <div class="text-center">
-                <v-btn variant="elevated" color="blue-darken-1" @click="generatePDF">
-                  print pdf
-                </v-btn>
-              </div>
+                <v-card-actions>
+                  <v-row justify="center" class="w-100">
+                    <v-col cols="auto">
+                      <div class="text-center">
+                        <v-btn variant="elevated" color="blue-accent-3" @click="fetchData">
+                          Fetch Data
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-card-actions>
+              </v-card>
+              <v-card-actions>
+                <v-row justify="center" class="mt-3">
+                  <v-col cols="auto">
+                    <div class="text-center">
+                      <v-btn variant="elevated" color="blue-darken-1" @click="generatePDF">
+                        print pdf
+                      </v-btn>
+                    </div>
+                  </v-col>
+                  <v-col cols="auto">
+                    <div class="text-center">
+                      <v-btn variant="elevated" color="red" @click="clearLocalStorage">
+                        Clear
+                      </v-btn>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-card-actions>
             </v-col>
-            <v-col cols="auto">
-              <div class="text-center">
-                <v-btn variant="elevated" color="red" @click="clearLocalStorage">
-                  Clear
-                </v-btn>
-              </div>
+            <v-col cols="12" md="9">
+              <v-card class="mt-15">
+                <div>
+                  <v-row>
+                    <v-col cols="3">
+                      <v-card-title>Partner Report</v-card-title>
+                      <v-card-subtitle>No: {{ partnerInfoRef.partner_id }}</v-card-subtitle>
+                      <v-card-subtitle>Partner: {{ partnerInfoRef.partner_name }}</v-card-subtitle>
+                    </v-col>
+                    <v-col cols="8" class="d-flex justify-end">
+                      <img width="110" :src="yourImage" />
+                    </v-col>
+                  </v-row>
+                  <v-card-text>
+                    <v-row justify="space-between">
+                      <v-col cols="3" class="bg-yellow-darken-2 text-black pa-3 ml-2">
+                        Date: {{ currentDateTime }}
+                      </v-col>
+                      <v-col>
+                        {{ partnerInfoRef.partner_fullname }}
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+
+                  <v-card-text>
+                    <v-table class="custom-table">
+                      <thead>
+                        <tr class="text-center">
+                          <th>Date</th>
+                          <th>Number of TXN</th>
+                          <th>Total Sale Amount</th>
+                          <th>Refund TXN</th>
+                          <th>Total Refund</th>
+                          <th>Remark</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="item in tableData" :key="item.date">
+                          <td>{{ item.date }}</td>
+                          <td>{{ item.number_TXN }}</td>
+                          <td class="text-end">{{ new Intl.NumberFormat('en-US').format(item.total_sale_amount) }}</td>
+                          <td class="text-end">{{ item.refund_TXN }}</td>
+                          <td class="text-end">{{ new Intl.NumberFormat('en-US').format(item.total_Refund) }}</td>
+                          <td></td> <!-- Add remarks if needed -->
+                        </tr>
+
+                        <tr class="total">
+                          <td class="text-end">Total Sale</td>
+                          <td></td>
+                          <td class="text-end">{{ totalSaleAmount }}</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+
+                        <tr>
+                          <td>Cancel from system Refund </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td class="text-end">-{{ totalRefund }}</td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>Total Sale After Refund</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td class="text-end">{{ totalSaleAfterRefund }}</td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>Transaction fee 2% (2) = (1)*2%</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td class="text-end">-{{ transactionFee }}</td>
+                          <td></td>
+                        </tr>
+                        <tr class="total">
+                          <td class="text-end">Total Net</td>
+                          <td></td>
+                          <td class="text-end">{{ totalNetAfterFee }}</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </v-table>
+                    <v-card-text>
+                      <v-row justify="space-between">
+                        <v-col cols="4" class="ml-15">
+                          ຜູ້ອອກບິນ
+                        </v-col>
+
+                        <v-col cols="6">
+                          ຜູ້ຮັບບິນ
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
+                  </v-card-text>
+
+                </div>
+              </v-card>
             </v-col>
           </v-row>
-        </v-card-actions>
-      </v-col>
-      <v-col cols="12" md="9">
-        <v-card class="mt-15">
-          <div>
-            <v-row>
-              <v-col cols="3">
-                <v-card-title>Partner Report</v-card-title>
-                <v-card-subtitle>No: {{ partnerInfoRef.partner_id }}</v-card-subtitle>
-                <v-card-subtitle>Partner: {{ partnerInfoRef.partner_name }}</v-card-subtitle>
-              </v-col>
-              <v-col cols="8" class="d-flex justify-end">
-                <img width="110" 
-                :src="yourImage" />
-              </v-col>
-            </v-row>
-            <v-card-text>
-              <v-row justify="space-between">
-                <v-col cols="3" class="bg-yellow-darken-2 text-black pa-3 ml-2">
-                  Date: {{ currentDateTime }}
-                </v-col>
-                <v-col>
-                  {{ partnerInfoRef.partner_fullname }}
-                </v-col>
-              </v-row>
-            </v-card-text>
-
-            <v-card-text>
-              <v-table class="custom-table">
-                <thead>
-                  <tr class="text-center">
-                    <th>Date</th>
-                    <th>Number of TXN</th>
-                    <th>Total Sale Amount</th>
-                    <th>Refund TXN</th>
-                    <th>Total Refund</th>
-                    <th>Remark</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item in tableData" :key="item.date">
-                    <td>{{ item.date }}</td>
-                    <td>{{ item.number_TXN }}</td>
-                    <td class="text-end">{{ new Intl.NumberFormat('en-US').format(item.total_sale_amount) }}</td>
-                    <td class="text-end">{{ item.refund_TXN }}</td>
-                    <td class="text-end">{{ new Intl.NumberFormat('en-US').format(item.total_Refund) }}</td>
-                    <td></td> <!-- Add remarks if needed -->
-                  </tr>
-
-                  <tr class="total">
-                    <td class="text-end">Total Sale</td>
-                    <td></td>
-                    <td class="text-end">{{ totalSaleAmount }}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-
-                  <tr>
-                    <td>Cancel from system Refund </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="text-end">-{{ totalRefund }}</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>Total Sale After Refund</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="text-end">{{ totalSaleAfterRefund }}</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>Transaction fee 2% (2) = (1)*2%</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="text-end">-{{ transactionFee }}</td>
-                    <td></td>
-                  </tr>
-                  <tr class="total">
-                    <td class="text-end">Total Net</td>
-                    <td></td>
-                    <td class="text-end">{{ totalNetAfterFee }}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </v-table>
-              <v-card-text>
-            <v-row justify="space-between">
-              <v-col cols="4" class="ml-15">
-                ຜູ້ອອກບິນ
-              </v-col>
-
-              <v-col cols="6" >
-                ຜູ້ຮັບບິນ
-              </v-col>
-            </v-row>
-          </v-card-text>
-            </v-card-text>
-
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
-
+        </v-container>
+      </v-img>
+    </v-container>
+  </v-app>
 
 
   <v-container>
@@ -397,7 +404,7 @@ const generatePDF = () => {
 
   const imgWidth = 30;  // Adjust width
   const imgHeight = 30; // Adjust height
-  
+
 
   // Title of the PDF
   pdf.setFont('helvetica', 'bold');
@@ -408,7 +415,7 @@ const generatePDF = () => {
   // Partner Info Section
   pdf.setFont('helvetica', 'normal');
   pdf.setFontSize(12);
-  pdf.addImage(imageBase64, 'JPEG', pageWidth - imgWidth - margin, margin -10, imgWidth, imgHeight,);
+  pdf.addImage(imageBase64, 'JPEG', pageWidth - imgWidth - margin, margin - 10, imgWidth, imgHeight,);
   pdf.text(`Partner ID: ${partnerInfoRef.value.partner_id || 'Unknown'}`, margin, yPosition);
   yPosition += 6;
   pdf.text(`Partner Name: ${partnerInfoRef.value.partner_name || 'Unknown'}`, margin, yPosition);
@@ -559,5 +566,8 @@ export default {
 .total {
   background-color: #d1cece;
   /* Optional: Add background color */
+}
+.fill-height {
+  height: 100vh; /* Full screen height */
 }
 </style>

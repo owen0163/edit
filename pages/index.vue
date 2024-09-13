@@ -1,6 +1,7 @@
 <template>
-
-<v-img src="https://t3.ftcdn.net/jpg/04/82/72/06/360_F_482720634_JiD37DmsdiaCVVfjFmG3waqtUz6L2n7j.jpg">
+ <v-app>
+        <v-container fluid class="fill-height pa-0">
+            <v-img src="https://static.vecteezy.com/ti/gratis-vektor/p1/24596331-hintergrund-design-mit-orange-farbe-geeignet-zum-4k-auflosung-vektor.jpg" class="fill-height" cover>
       <v-container >
         <v-card>
       <v-row >
@@ -10,7 +11,7 @@
           <v-col cols="6" class="d-flex align-center justify-center" style="max-width: 500px">
           <v-card class="w-100" >
             <v-card-title>
-              <div class="text-center text-h4" style="color: #42A5F5;">Login</div>
+              <div class="text-center text-h4" style="color: #E65100;">Login</div>
             </v-card-title>
             <v-form v-model="formValid" ref="form" class="mt-10">
               <v-text-field class="mr-2 ml-2 " v-model="email" :rules="emailRules" label="Email" required
@@ -18,7 +19,7 @@
               <v-text-field class="mr-2 ml-2" v-model="password" :rules="passwordRules" label="Password" type="password"
                 required></v-text-field>
               <v-col class="text-center">
-                <v-btn @click="submitForm" :disabled="!formValid" color="primary">
+                <v-btn @click="submitForm" :disabled="!formValid" color="orange-darken-4">
                   Login
                 </v-btn>
               </v-col>
@@ -36,6 +37,8 @@
     </v-card>
     </v-container>
   </v-img>
+        </v-container>
+    </v-app>
 </template>
 
 <script setup>
@@ -82,3 +85,10 @@ const submitForm = async () => {
 };
 
 </script>
+
+
+<style scoped>
+.fill-height {
+  height: 100vh; /* Full screen height */
+}
+</style>

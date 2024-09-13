@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-layout>
-      <v-app-bar color="orange-darken-3" prominent>
+      <v-app-bar color="orange-darken-2" prominent :elevation="9">
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title>
           <v-btn href="/products">Vendee</v-btn>
@@ -20,15 +20,15 @@
           <v-menu min-width="200px" rounded>
             <template v-slot:activator="{ props }">
               <v-btn icon v-bind="props">
-                <v-avatar color="info" size="large">
+                <v-avatar color="orange-darken-1" size="large">
                   <span class="text-subtitle-1">{{ user.name }}</span>
                 </v-avatar>
               </v-btn>
             </template>
-            <v-card>
+            <v-card >
               <v-card-text>
                 <div class="mx-auto text-center">
-                  <v-avatar color="info">
+                  <v-avatar color="orange-darken-1">
                     <span>{{ user.name }}</span>
                   </v-avatar>
                   <h3>{{ user.name }}</h3>
@@ -51,17 +51,17 @@
         </div>
         <!-- //////////////////////////////////////////////////////////////////////////////////// -->
       </v-app-bar>
-      <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'bottom' : undefined" temporary>
-        <v-list>
-          <v-list-item href="/products">ຂໍ້ມູນສິນຄ້າ</v-list-item>
-          <v-list-item href="/add">ເພີ້ມມູນສິນຄ້າ</v-list-item>
-          <v-list-item href="/about">ຈັດການຂໍ້ມູນສິນຄ້າ</v-list-item>
-          <v-list-item href="/bills">ໃບບິນ</v-list-item>
-          <v-list-item href="/history">ປະຫວັດໃບບິນ</v-list-item>
-          <v-list-item href="/pdfHistory">ປິ້ນປະຫວັດໃບບິນ</v-list-item>
-          <v-list-item href="/partner">ປະຫວັດ</v-list-item>
-        </v-list>
-      </v-navigation-drawer>
+      <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'bottom' : undefined" temporary class="bg-grey-lighten-4">
+  <v-list>
+    <v-list-item href="/products" class="text-deep-orange-darken-3 mdi mdi-cube">ຂໍ້ມູນສິນຄ້າ</v-list-item>
+    <v-list-item href="/add" class="text-deep-orange-darken-3 mdi mdi-forklift">ເພີ້ມມູນສິນຄ້າ</v-list-item>
+    <v-list-item href="/about" class="text-deep-orange-darken-3 mdi mdi-pen">ຈັດການຂໍ້ມູນສິນຄ້າ</v-list-item>
+    <v-list-item href="/bills" class="text-deep-orange-darken-3 mdi mdi-printer">ໃບບິນ</v-list-item>
+    <v-list-item href="/history" class="text-deep-orange-darken-3 mdi mdi-clipboard-text">ປະຫວັດໃບບິນ</v-list-item>
+    <v-list-item href="/pdfHistory" class="text-deep-orange-darken-3 mdi mdi-file-multiple">ປິ້ນປະຫວັດໃບບິນ</v-list-item>
+    <v-list-item href="/partner" class="text-deep-orange-darken-3 mdi mdi-printer">ປະຫວັດ</v-list-item>
+  </v-list>
+</v-navigation-drawer>
     </v-layout>
   </v-card>
 </template>

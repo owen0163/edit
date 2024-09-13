@@ -1,4 +1,7 @@
 <template>
+    <v-app>
+        <v-container fluid class="fill-height pa-0">
+            <v-img src="https://wallpapers.com/images/hd/hd-orange-wavelength-art-fbcwek67vdsjxlgv.jpg" class="fill-height" cover>
   <v-container>
     <v-row justify="center">
       <v-col cols="13" md="6" lg="2" v-for="product in products.products" :key="product.id">
@@ -112,6 +115,9 @@
       </v-col>
     </v-row>
   </v-container>
+</v-img>
+        </v-container>
+    </v-app>
   <v-container>
     <v-row>
       <v-col>
@@ -212,3 +218,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.fill-height {
+  height: 100vh; /* Full screen height */
+}
+</style>
