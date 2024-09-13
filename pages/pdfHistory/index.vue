@@ -74,14 +74,14 @@
             </v-img>
         </v-container>
     </v-app>
-                <v-container>
-                    <v-row>
-                        <v-col>
-                            <Header11></Header11>
-                        </v-col>
-                    </v-row>
-                </v-container>
-        
+    <v-container>
+        <v-row>
+            <v-col>
+                <Header11></Header11>
+            </v-col>
+        </v-row>
+    </v-container>
+
 </template>
 
 
@@ -95,7 +95,6 @@ import { useRouter } from 'vue-router';
 import { usePdfHistory } from '~/stores/pdfHistory';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-
 
 definePageMeta({
     middleware: 'auth'
@@ -262,6 +261,7 @@ const clearPdfData = () => {
 }
 
 .fill-height {
-  height: 100vh; /* Full screen height */
+    height: 100vh;
+    /* Full screen height */
 }
 </style>
