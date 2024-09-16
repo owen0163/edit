@@ -4,14 +4,14 @@
             <v-img src="https://wallpapers.com/images/hd/hd-orange-wavelength-art-fbcwek67vdsjxlgv.jpg" class="fill-height" cover>
   <v-container>
     <v-row justify="center">
-      <v-col cols="8"  lg="2" v-for="product in products.products" :key="product.id">
+      <v-col cols="12" sm="5" md="3" lg="2"  xl="3" v-for="product in products.products" :key="product.id">
         <div>
-          <v-card class="mx-auto mt-50px mt-15" max-width="300">
-            <div class="d-flex justify-center">
-              <v-col>
-            <v-img :height="200" :width="200" :src="product.image" cover></v-img>
-          </v-col>
+          <v-card class="mx-auto mt-50px mt-15" max-width="200">
+         
+              <div class="d-flex justify-center">
+              <v-img :height="200" :width="200" :src="product.image" cover></v-img>
           </div>
+      
             <v-card-title>
               {{ product.name }}
 
@@ -39,7 +39,7 @@
                     <v-divider :thickness="3"></v-divider>
 
                     <v-row justify="center" class="mt-2">
-                      <v-col cols="13" md="6" lg="6" v-if="selectedProduct" :key="index">
+                      <v-col cols="12" sm="6" md="4" lg="4" xl="3" v-if="selectedProduct" :key="index">
 
                         <div class="d-flex justify-center">
                             <v-col lg="4">
@@ -139,9 +139,9 @@ const products = useProductStore();
 const selectedProduct = ref(null);
 const selectedProductId = ref(null);
 
-definePageMeta({
-  middleware: 'auth'
-});
+// definePageMeta({
+//   middleware: 'auth'
+// });
 
 onMounted(async () => {
   await products.fetchProducts();
@@ -197,6 +197,9 @@ const updateProductDetails = async (productId, updatedProduct) => {
 
 <script>
 export default {
+  router: {
+    middleware: ['auth'] // Apply 'auth' middleware globally
+  },
   data() {
     return {
 
@@ -215,7 +218,22 @@ export default {
         }
       }
     }
-  }
+  },
+  // buildModules: [
+  //   '@nuxtjs/vuetify',
+  // ],
+  // vuetify: {
+  //   breakpoint: {
+  //     thresholds: {
+  //       xs: 600,
+  //       sm: 960,
+  //       md: 1280,
+  //       lg: 1920,
+  //       xl: 2560,
+  //     },
+  //     scrollBarWidth: 24,
+  //   },
+  // }
 }
 </script>
 

@@ -5,7 +5,6 @@
         src="https://static.vecteezy.com/ti/gratis-vektor/p1/24596331-hintergrund-design-mit-orange-farbe-geeignet-zum-4k-auflosung-vektor.jpg"
         class="fill-height" cover>
         <v-container>
-
           <v-row class="d-flex align-center justify-center" style="height: 50vh;">
             <v-col md="6" style="max-width: 500px;">
               <v-card>

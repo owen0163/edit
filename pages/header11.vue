@@ -51,7 +51,7 @@
         </div>
         <!-- //////////////////////////////////////////////////////////////////////////////////// -->
       </v-app-bar>
-      <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'bottom' : undefined" temporary class="bg-grey-lighten-4">
+      <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'bottom' : 'left'" temporary class="bg-grey-lighten-4">
   <v-list>
     <v-list-item href="/products" class="text-deep-orange-darken-3 mdi mdi-cube">ຂໍ້ມູນສິນຄ້າ</v-list-item>
     <v-list-item href="/add" class="text-deep-orange-darken-3 mdi mdi-forklift">ເພີ້ມມູນສິນຄ້າ</v-list-item>
@@ -128,5 +128,20 @@ export default {
       this.drawer = false
     },
   },
+  buildModules: [
+    '@nuxtjs/vuetify',
+  ],
+  vuetify: {
+    breakpoint: {
+      thresholds: {
+        xs: 600,
+        sm: 960,
+        md: 1280,
+        lg: 1920,
+        xl: 2560,
+      },
+      scrollBarWidth: 24,
+    },
+  }
 }
 </script>

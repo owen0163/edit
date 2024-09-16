@@ -4,10 +4,10 @@
             <v-img src="https://wallpapers.com/images/hd/hd-orange-wavelength-art-fbcwek67vdsjxlgv.jpg" class="fill-height" cover>
   <v-container>
     <v-row justify="center">
-          <v-col cols="8"  lg="2" v-for="product in products.products" :key="product.id">
-        <v-card class="mx-auto mt-50px mt-15" max-width="300">
+      <v-col cols="12" sm="5" md="3" lg="2" xl="3" v-for="product in products.products" :key="product.id">
+        <v-card class="mx-auto mt-50px mt-15" max-width="200">
           <div class="d-flex justify-center">
-              <v-img :height="270" :width="200" :src="product.image" cover></v-img>
+              <v-img :height="200" :width="200" :src="product.image" cover></v-img>
           </div>
           <v-card-title>{{ product.name }}</v-card-title>
           <v-card-text>
@@ -74,9 +74,10 @@ const products = useProductStore();
 const deleteInput = ref('');
 const pdfCount = ref(0);
 
-definePageMeta({
-  middleware: 'auth'
-});
+// definePageMeta({
+//   middleware: 'auth'
+// });
+
 // Watch pdf count
 watchEffect(() => {
   pdfCount.value = addPdf.pdf.length;
@@ -108,6 +109,9 @@ const submitForm = async (id, isActive) => {
 
 <script>
 export default {
+  router: {
+    middleware: ['auth'] // Apply 'auth' middleware globally
+  },
   data() {
     return {
       rules: {
