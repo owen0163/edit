@@ -6,11 +6,13 @@
         class="fill-height" cover>
         <v-container>
           <v-row class="d-flex align-center justify-center" style="height: 50vh;">
-            <v-col md="6" style="max-width: 500px;">
+            <v-col md="6" style="max-width: 1000px;">      
               <v-card>
+           
                 <v-card-title>
                   <div class="text-center text-h4" style="color: #E65100;">Login</div>
                 </v-card-title>
+
                 <v-form v-model="formValid" ref="form" class="mt-10">
                   <v-text-field class="mr-2 ml-2" v-model="email" :rules="emailRules" label="Email" required
                     type="email"></v-text-field>

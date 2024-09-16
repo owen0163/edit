@@ -8,13 +8,13 @@
 
           <v-btn class="text-none" stacked href="/bills">
             <v-badge color="error" :content="pdfCount">
-              <v-icon size="large">mdi-cart</v-icon>
+              <v-icon size="default">mdi-cart</v-icon>
             </v-badge>
           </v-btn>
 
 
         </v-toolbar-title>
-        <v-spacer></v-spacer>
+       
         <!-- /////////////////////////////////////////////////////////////////////////////////// -->
         <div class="mr-2">
           <v-menu min-width="200px" rounded>
@@ -51,7 +51,7 @@
         </div>
         <!-- //////////////////////////////////////////////////////////////////////////////////// -->
       </v-app-bar>
-      <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'bottom' : 'left'" temporary class="bg-grey-lighten-4">
+      <v-navigation-drawer v-model="drawer" location="left" temporary class="bg-grey-lighten-4">
   <v-list>
     <v-list-item href="/products" class="text-deep-orange-darken-3 mdi mdi-cube">ຂໍ້ມູນສິນຄ້າ</v-list-item>
     <v-list-item href="/add" class="text-deep-orange-darken-3 mdi mdi-forklift">ເພີ້ມມູນສິນຄ້າ</v-list-item>
