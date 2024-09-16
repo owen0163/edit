@@ -8,7 +8,7 @@
         <v-col cols="6">
           <v-img src="https://img.freepik.com/premium-photo/vector-art-about-machine-technology_975572-4577.jpg"></v-img>
           </v-col>
-          <v-col cols="6" class="d-flex align-center justify-center" style="max-width: 500px">
+          <v-col cols="6" class="d-flex align-center justify-center" style="max-width: 450px">
           <v-card class="w-100" >
             <v-card-title>
               <div class="text-center text-h4" style="color: #E65100;">Login</div>

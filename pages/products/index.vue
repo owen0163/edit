@@ -7,7 +7,7 @@
           <v-col cols="8"  lg="2" v-for="product in products.products" :key="product.id">
         <v-card class="mx-auto mt-50px mt-15" max-width="300">
           <div class="d-flex justify-center">
-              <v-img :height="180" :src="product.image" cover></v-img>
+              <v-img :height="270" :width="200" :src="product.image" cover></v-img>
           </div>
           <v-card-title>{{ product.name }}</v-card-title>
           <v-card-text>
