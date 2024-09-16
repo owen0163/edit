@@ -16,7 +16,7 @@ export const usePartnerStore = defineStore('partner', {
     // Fetch all partners
     async fetchAllPartners() {
       try {
-        const response = await axios.get('https://1d42a0d5-7661-4467-8eef-b6c1e07ad907-00-3fjq7ac687h9n.sisko.replit.dev/parnetrs');
+        const response = await axios.get('http://localhost:8080/parnetrs');
         this.partners = response.data;
       } catch (error) {
         console.error('Failed to fetch partners:', error);
@@ -27,7 +27,7 @@ export const usePartnerStore = defineStore('partner', {
     // Fetch a partner by ID
     async fetchPartnerById(id) {
       try {
-        const response = await axios.get(`https://1d42a0d5-7661-4467-8eef-b6c1e07ad907-00-3fjq7ac687h9n.sisko.replit.dev/parnetr/${id}`);
+        const response = await axios.get(`http://localhost:8080/parnetr/${id}`);
         this.partners = [response.data]; // Store the single partner data in an array
       } catch (error) {
         console.error('Failed to fetch partner:', error);
@@ -38,7 +38,7 @@ export const usePartnerStore = defineStore('partner', {
     // Fetch partner data based on selected partner and date range
     async fetchPartnerData(partnerId, { startDate, endDate }) {
       try {
-        const response = await axios.post('https://1d42a0d5-7661-4467-8eef-b6c1e07ad907-00-3fjq7ac687h9n.sisko.replit.dev/get-partner1', {
+        const response = await axios.post('http://localhost:8080/get-partner1', {
           partner_id: partnerId,
           startDate,  // Pass the start date
           endDate,    // Pass the end date

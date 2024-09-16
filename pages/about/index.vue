@@ -4,11 +4,11 @@
             <v-img src="https://wallpapers.com/images/hd/hd-orange-wavelength-art-fbcwek67vdsjxlgv.jpg" class="fill-height" cover>
   <v-container>
     <v-row justify="center">
-      <v-col cols="13" md="6" lg="2" v-for="product in products.products" :key="product.id">
+      <v-col cols="8"  lg="2" v-for="product in products.products" :key="product.id">
         <div>
-          <v-card class="mt-15">
+          <v-card class="mx-auto mt-50px mt-15" max-width="300">
             <div class="d-flex justify-center">
-              <v-col lg="12">
+              <v-col>
             <v-img :height="200" :width="200" :src="product.image" cover></v-img>
           </v-col>
           </div>
