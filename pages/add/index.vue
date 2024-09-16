@@ -93,8 +93,9 @@ const productStore = useProductStore();
 const router = useRouter();
 
 definePageMeta({
-    middleware: 'auth'
+  middleware: 'auth'
 });
+
 
 const product = ref({
     name: '',

@@ -82,9 +82,7 @@ const drawer = ref(false);
 const pdfStore = usePdf();
 const pdfCount = ref(0);
 
-definePageMeta({
-  middleware: 'auth'
-});
+
 
 // Watch effect to update pdfCount on client side
 watchEffect(() => {

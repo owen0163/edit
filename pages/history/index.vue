@@ -99,6 +99,7 @@ definePageMeta({
   middleware: 'auth'
 });
 
+
 onMounted(() => {
   billStore.fetchBills();
   console.log(billStore.billsHistory); // Log billsHistory to check if username is present

@@ -74,9 +74,10 @@ const products = useProductStore();
 const deleteInput = ref('');
 const pdfCount = ref(0);
 
-// definePageMeta({
-//   middleware: 'auth'
-// });
+definePageMeta({
+  middleware: 'auth'
+});
+
 
 // Watch pdf count
 watchEffect(() => {
@@ -109,9 +110,7 @@ const submitForm = async (id, isActive) => {
 
 <script>
 export default {
-  router: {
-    middleware: ['auth'] // Apply 'auth' middleware globally
-  },
+  
   data() {
     return {
       rules: {

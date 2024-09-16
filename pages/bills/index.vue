@@ -103,6 +103,7 @@ definePageMeta({
   middleware: 'auth'
 });
 
+
 const router = useRouter();
 const pdfStore = usePdf();
 const products = useProductStore();

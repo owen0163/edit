@@ -139,9 +139,10 @@ const products = useProductStore();
 const selectedProduct = ref(null);
 const selectedProductId = ref(null);
 
-// definePageMeta({
-//   middleware: 'auth'
-// });
+definePageMeta({
+  middleware: 'auth'
+});
+
 
 onMounted(async () => {
   await products.fetchProducts();
@@ -197,9 +198,7 @@ const updateProductDetails = async (productId, updatedProduct) => {
 
 <script>
 export default {
-  router: {
-    middleware: ['auth'] // Apply 'auth' middleware globally
-  },
+
   data() {
     return {
 
