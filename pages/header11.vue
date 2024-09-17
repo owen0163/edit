@@ -53,13 +53,16 @@
       </v-app-bar>
       <v-navigation-drawer v-model="drawer" location="left" temporary class="bg-grey-lighten-4">
   <v-list>
-    <v-list-item href="/products" class="text-deep-orange-darken-3 mdi mdi-cube">ຂໍ້ມູນສິນຄ້າ</v-list-item>
+    <v-list-item href="/products" class="text-deep-orange-darken-3 mdi mdi-cube">ສິນຄ້າ</v-list-item>
+    <v-list-item href="/productall" class="text-deep-orange-darken-3 mdi mdi-book-open">ຂໍ້ມູນສິນຄ້າ</v-list-item>
     <v-list-item href="/add" class="text-deep-orange-darken-3 mdi mdi-forklift">ເພີ້ມມູນສິນຄ້າ</v-list-item>
     <v-list-item href="/about" class="text-deep-orange-darken-3 mdi mdi-pen">ຈັດການຂໍ້ມູນສິນຄ້າ</v-list-item>
     <v-list-item href="/bills" class="text-deep-orange-darken-3 mdi mdi-printer">ໃບບິນ</v-list-item>
     <v-list-item href="/history" class="text-deep-orange-darken-3 mdi mdi-clipboard-text">ປະຫວັດໃບບິນ</v-list-item>
+    <v-list-item href="/historyBill" class="text-deep-orange-darken-3 mdi mdi-file-document">ປະຫວັດໃບບິນແບບເລືອກ</v-list-item>
     <v-list-item href="/pdfHistory" class="text-deep-orange-darken-3 mdi mdi-file-multiple">ປິ້ນປະຫວັດໃບບິນ</v-list-item>
     <v-list-item href="/partner" class="text-deep-orange-darken-3 mdi mdi-printer">ປະຫວັດ</v-list-item>
+ 
   </v-list>
 </v-navigation-drawer>
     </v-layout>

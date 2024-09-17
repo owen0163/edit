@@ -148,7 +148,7 @@
                       </tbody>
                     </v-table>
                     <v-card-text>
-                      <v-row justify="space-between">
+                      <!-- <v-row justify="space-between">
                         <v-col cols="4" class="ml-15">
                           ຜູ້ອອກບິນ
                         </v-col>
@@ -156,7 +156,7 @@
                         <v-col cols="6">
                           ຜູ້ຮັບບິນ
                         </v-col>
-                      </v-row>
+                      </v-row> -->
                     </v-card-text>
                   </v-card-text>
 
