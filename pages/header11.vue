@@ -14,18 +14,18 @@
 
 
         </v-toolbar-title>
-       
+
         <!-- /////////////////////////////////////////////////////////////////////////////////// -->
         <div class="mr-2">
           <v-menu min-width="200px" rounded>
             <template v-slot:activator="{ props }">
               <v-btn icon v-bind="props">
-                <v-avatar color="orange-darken-1" size="large">
+                <v-avatar v-if="user && user.name" color="orange-darken-1" size="large">
                   <span class="text-subtitle-1">{{ user.name }}</span>
                 </v-avatar>
               </v-btn>
             </template>
-            <v-card >
+            <v-card>
               <v-card-text>
                 <div class="mx-auto text-center">
                   <v-avatar color="orange-darken-1">
@@ -52,19 +52,28 @@
         <!-- //////////////////////////////////////////////////////////////////////////////////// -->
       </v-app-bar>
       <v-navigation-drawer v-model="drawer" location="left" temporary class="bg-grey-lighten-4">
-  <v-list>
-    <v-list-item href="/products" class="text-deep-orange-darken-3 mdi mdi-cube">ສິນຄ້າ</v-list-item>
-    <v-list-item href="/productall" class="text-deep-orange-darken-3 mdi mdi-book-open">ຂໍ້ມູນສິນຄ້າ</v-list-item>
-    <v-list-item href="/add" class="text-deep-orange-darken-3 mdi mdi-forklift">ເພີ້ມມູນສິນຄ້າ</v-list-item>
-    <v-list-item href="/about" class="text-deep-orange-darken-3 mdi mdi-pen">ຈັດການຂໍ້ມູນສິນຄ້າ</v-list-item>
-    <v-list-item href="/bills" class="text-deep-orange-darken-3 mdi mdi-printer">ໃບບິນ</v-list-item>
-    <v-list-item href="/history" class="text-deep-orange-darken-3 mdi mdi-clipboard-text">ປະຫວັດໃບບິນ</v-list-item>
-    <v-list-item href="/historyBill" class="text-deep-orange-darken-3 mdi mdi-file-document">ປະຫວັດໃບບິນແບບເລືອກ</v-list-item>
-    <v-list-item href="/pdfHistory" class="text-deep-orange-darken-3 mdi mdi-file-multiple">ປິ້ນປະຫວັດໃບບິນ</v-list-item>
-    <v-list-item href="/partner" class="text-deep-orange-darken-3 mdi mdi-printer">ປະຫວັດ</v-list-item>
- 
-  </v-list>
-</v-navigation-drawer>
+        <v-list>
+          <v-list-item href="/products" class="text-deep-orange-darken-3 mdi mdi-cube">ສິນຄ້າ</v-list-item>
+          <v-list-item href="/productall" class="text-deep-orange-darken-3 mdi mdi-book-open">ຂໍ້ມູນສິນຄ້າ</v-list-item>
+
+          <!-- Only show these items if the user is an admin -->
+          <v-list-item v-if="isAdmin" href="/add"
+            class="text-deep-orange-darken-3 mdi mdi-forklift">ເພີ້ມມູນສິນຄ້າ</v-list-item>
+          <v-list-item v-if="isAdmin" href="/about"
+            class="text-deep-orange-darken-3 mdi mdi-pen">ຈັດການຂໍ້ມູນສິນຄ້າ</v-list-item>
+
+
+          <v-list-item href="/bills" class="text-deep-orange-darken-3 mdi mdi-printer">ໃບບິນ</v-list-item>
+          <v-list-item href="/history"
+            class="text-deep-orange-darken-3 mdi mdi-clipboard-text">ປະຫວັດໃບບິນ</v-list-item>
+          <v-list-item href="/historyBill"
+            class="text-deep-orange-darken-3 mdi mdi-file-document">ປະຫວັດໃບບິນແບບເລືອກ</v-list-item>
+          <v-list-item href="/pdfHistory"
+            class="text-deep-orange-darken-3 mdi mdi-file-multiple">ປິ້ນປະຫວັດໃບບິນ</v-list-item>
+          <v-list-item href="/partner" class="text-deep-orange-darken-3 mdi mdi-printer">ປະຫວັດ</v-list-item>
+
+        </v-list>
+      </v-navigation-drawer>
     </v-layout>
   </v-card>
 </template>
@@ -77,7 +86,8 @@ import VueCookies from 'vue-cookies';
 import { usePdf } from '~/stores/pdf';
 
 const token = ref(null);
-const user = ref({ email: '', name: '' });
+// const user = ref({ email: '', name: '', role: '' });
+const user = ref(null);
 const authStore = useAuthStore();
 const router = useRouter();
 const menu = ref(false);
@@ -85,7 +95,7 @@ const drawer = ref(false);
 const pdfStore = usePdf();
 const pdfCount = ref(0);
 
-
+const isAdmin = ref(false);
 
 // Watch effect to update pdfCount on client side
 watchEffect(() => {
@@ -96,6 +106,10 @@ onMounted(async () => {
   const userData = VueCookies.get('user');
   if (userData) {
     user.value = userData;
+    // isAdmin.value = user.value.role === 'admin';
+    if (user.value.role === 'admin') {
+      isAdmin.value = true;
+    }
   } else {
     console.error('User data not found in cookies');
   }

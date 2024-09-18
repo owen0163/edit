@@ -8,7 +8,7 @@
           <v-card outlined class="mt-15">
             <div ref="billContent">
               <v-card-title class="text-center">bill</v-card-title>
-              <v-card-subtitle>UserID: {{ user.user_id || 'Unknown' }}</v-card-subtitle>
+              <v-card-subtitle>UserID: {{ user?.user_id || 'Unknown' }}</v-card-subtitle>
               <v-card-subtitle>User: {{ user?.name || 'Unknown' }}</v-card-subtitle>
               <v-card-subtitle>Date: {{ currentDateTime }}</v-card-subtitle>
 
@@ -68,6 +68,7 @@
           </v-card>
           <v-card-actions class="d-flex justify-center">
             <v-btn variant="flat" color="primary" @click="generatePDFAndPostBill">bill</v-btn>
+          
             <v-btn variant="elevated" color="red-darken-2" @click="clearPdfData">
               ລືບ
             </v-btn>
@@ -109,8 +110,7 @@ const pdfStore = usePdf();
 const products = useProductStore();
 const billStore = useBillStore();
 const billContent = ref(null);
-const user = ref({ email: '', name: '' });
-
+const user = ref({ user_id: 'Unknown', name: 'Unknown' });
 const totalImages = ref(0);
 const loadedImages = ref(0);
 
@@ -125,7 +125,7 @@ onMounted(async () => {
   } else {
     console.error('User data not found in cookies');
   }
-
+console.log('User data:', user.value);
   pdfStore.loadFromLocalStorage();
   totalImages.value = pdfOrder.value.length;
 });
@@ -286,7 +286,20 @@ const generatePDF = () => {
 
 
 //////////////////////////////////////////////////////////////////////////////
-const postBillToDatabase = () => {
+// const postBillToDatabase = () => {
+//   const billData = {
+//   userId: user.value.user_id,
+//   products: pdfOrder.value.map(item => ({
+//     productId: item.id,
+//     quantity: item.stock,
+//     price: item.currentprice
+//   })),
+// };
+
+//   console.log('Posting bill data:', JSON.stringify(billData, null, 2));
+//   billStore.postBill(billData);
+// };
+const postBillToDatabase = async () => {
   const billData = {
     userId: user.value.user_id,
     products: pdfOrder.value.map(item => ({
@@ -296,10 +309,28 @@ const postBillToDatabase = () => {
     })),
   };
 
-  console.log('Posting bill data:', JSON.stringify(billData, null, 2));
-  billStore.postBill(billData);
+  try {
+    console.log('Posting bill data:', JSON.stringify(billData, null, 2));
+    await billStore.postBill(billData); // Ensure `postBill` returns a promise
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Bill posted successfully",
+      showConfirmButton: false,
+      timer: 3000
+    });
+  } catch (error) {
+    console.error('Failed to post bill:', error);
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: `Failed to post bill: ${error.message}`,
+      showConfirmButton: false,
+      timer: 3000
+    });
+  }
 };
-
+/////////////////////////////////////////////////////////////////////////////
 const clearPdfData = () => {
   localStorage.removeItem('pdf');
   pdfStore.pdf.value = [];
@@ -318,6 +349,7 @@ const generatePDFAndPostBill = () => {
   generatePDF();
   postBillToDatabase();
 };
+
 </script>
 
 <style scoped>

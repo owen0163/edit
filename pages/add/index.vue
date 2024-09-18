@@ -93,7 +93,8 @@ const productStore = useProductStore();
 const router = useRouter();
 
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'auth',
+  middleware: 'admin'
 });
 
 
@@ -154,6 +155,7 @@ const addProduct = async () => {
 
 <script>
 export default {
+ 
     data() {
         return {
             rules: {

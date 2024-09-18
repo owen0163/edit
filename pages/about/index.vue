@@ -9,7 +9,7 @@
           <v-card class="mx-auto mt-50px mt-15" max-width="200">
          
               <div class="d-flex justify-center">
-              <v-img :height="200" :width="200" :src="product.image" cover></v-img>
+                <v-img aspect-ratio="4/3" :height="150" :width="150" :src="product.image" contain></v-img>
           </div>
       
             <v-card-title>
@@ -140,7 +140,8 @@ const selectedProduct = ref(null);
 const selectedProductId = ref(null);
 
 definePageMeta({
-  middleware: 'auth'
+    middleware: 'auth',
+  middleware: 'admin'
 });
 
 
@@ -198,7 +199,7 @@ const updateProductDetails = async (productId, updatedProduct) => {
 
 <script>
 export default {
-
+ 
   data() {
     return {
 
