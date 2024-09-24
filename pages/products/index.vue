@@ -82,7 +82,7 @@ const pdfCount = ref(0);
 const isAdmin = ref(false);
 
 definePageMeta({
-  middleware: 'auth'
+  middleware: ['auth', 'admin'],
 });
 
 
