@@ -160,261 +160,190 @@ const currentDateTime = ref(new Date().toLocaleString('en-US', {
   second: '2-digit',
   hour12: false,
 }));
-
-const onImageLoad = () => {
-  loadedImages.value++;
-  if (loadedImages.value === totalImages.value) {
-    console.log('All images loaded');
-  }
-};
-
-// const onImageError = (event) => {
-//   console.error(`Image failed to load: ${event.target.src}`); // Debug log
-//   event.target.src = '/path/to/placeholder-image.png'; // Fallback image
-//   loadedImages.value++;
-//   if (loadedImages.value === totalImages.value) {
-//     console.log('All images handled (loaded or failed).');
-//   }
-// };
-const toBase64 = (url) => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous'; // Handle cross-origin images
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      const dataURL = canvas.toDataURL('image/jpeg'); // Convert to Base64
-      resolve(dataURL);
-    };
-    img.onerror = reject;
-    img.src = url;
-  });
-};
-/////////////////////////////////////////////////////////////////////////////////
-// const generatePDF = () => {
-//   const pdf = new jsPDF('p', 'mm', 'a4');
-//   const margin = 10;
-//   const pageWidth = pdf.internal.pageSize.getWidth();
-//   const pageHeight = pdf.internal.pageSize.getHeight();
-//   let yPosition = margin;
-
-//   // Title
-//   pdf.setFontSize(22);
-//   pdf.setTextColor(40, 40, 40);
-//   pdf.text('Bill', pageWidth / 2, yPosition, { align: 'center' });
-//   yPosition += 15;
-
-//   // User Info
-//   pdf.setFontSize(12);
-//   pdf.setTextColor(80, 80, 80);
-//   pdf.text(`UserID: ${user.value.user_id || 'Unknown'}`, margin, yPosition);
-//   yPosition += 6;
-//   pdf.text(`User: ${user.value.name || 'Unknown'}`, margin, yPosition);
-//   yPosition += 6;
-//   pdf.text(`Date: ${currentDateTime.value}`, margin, yPosition);
-//   yPosition += 10;
-
-//   // Table Headers
-//   pdf.setFontSize(12);
-//   const cellHeight = 15;
-//   const cellWidth = [20, 70, 25, 20, 20, 40];
-//   const headers = ['ID', 'Item', 'Image', 'Quantity', 'Price', 'Amount'];
-
-//   let xPosition = margin;
-
-//   // Draw table header with background
-//   pdf.setFillColor(220, 220, 220);
-//   pdf.rect(margin, yPosition, pageWidth - 2 * margin, cellHeight, 'F'); // Fill header background
-//   pdf.setTextColor(0);
-//   headers.forEach((header, index) => {
-//     pdf.text(header, xPosition + 2, yPosition + 7);
-//     pdf.rect(xPosition, yPosition, cellWidth[index], cellHeight);
-//     xPosition += cellWidth[index];
-//   });
-
-//   yPosition += cellHeight;
-
-//   // Draw table data
-//   pdfOrder.value.forEach((pdfItem, index) => {
-//     if (yPosition + cellHeight > pageHeight - margin) {
-//       pdf.addPage();
-//       yPosition = margin;
-//     }
-
-//     xPosition = margin;
-
-//     // Draw alternating row colors
-//     if (index % 2 === 0) {
-//       pdf.setFillColor(240, 240, 240);
-//       pdf.rect(margin, yPosition, pageWidth - 2 * margin, cellHeight, 'F');
-//     }
-
-//     pdf.setTextColor(40, 40, 40);
-//     pdf.text(pdfItem.id.toString(), xPosition + 10, yPosition + 8, { align: 'center' });
-//     pdf.rect(xPosition, yPosition, cellWidth[0], cellHeight);
-//     xPosition += cellWidth[0];
-
-//     pdf.text(pdfItem.name, xPosition + 2, yPosition + 8);
-//     pdf.rect(xPosition, yPosition, cellWidth[1], cellHeight);
-//     xPosition += cellWidth[1];
-
-//     if (pdfItem.img) {
-//       const imgWidth = 12;
-//       const imgHeight = 12;
-//       const xCentered = xPosition + (cellWidth[2] - imgWidth) / 2;
-//       pdf.addImage(pdfItem.img, 'JPEG', xCentered, yPosition + 2, imgWidth, imgHeight);
-//     }
-//     pdf.rect(xPosition, yPosition, cellWidth[2], cellHeight);
-//     xPosition += cellWidth[2];
-
-//     pdf.text(pdfItem.stock.toString(), xPosition + cellWidth[3] / 2, yPosition + 8, { align: 'center' });
-//     pdf.rect(xPosition, yPosition, cellWidth[3], cellHeight);
-//     xPosition += cellWidth[3];
-
-//     pdf.text(pdfItem.currentprice.toString(), xPosition + cellWidth[3] / 2, yPosition + 8, { align: 'center' });
-//     pdf.rect(xPosition, yPosition, cellWidth[3], cellHeight);
-//     xPosition += cellWidth[3];
-
-//     const amount = (pdfItem.stock * pdfItem.currentprice).toString();
-//     pdf.text(amount, xPosition + 2, yPosition + 8);
-//     pdf.rect(xPosition, yPosition, cellWidth[5], cellHeight);
-
-//     yPosition += cellHeight;
-//   });
-
-//   // Total row
-//   if (yPosition + cellHeight > pageHeight - margin) {
-//     pdf.addPage();
-//     yPosition = margin;
-//   }
-
-//   xPosition = margin;
-
-//   for (let i = 0; i < 5; i++) {
-//     pdf.rect(xPosition, yPosition, cellWidth[i], cellHeight);
-//     xPosition += cellWidth[i];
-//   }
-
-//   pdf.text('Total', xPosition + 16 - cellWidth[5], yPosition + 8);
-//   pdf.text(totalAmount.value.toString(), xPosition + 2, yPosition + 8);
-//   pdf.rect(xPosition, yPosition, cellWidth[5], cellHeight);
-
-//   // Save the generated PDF
-//   pdf.save('bill.pdf');
-// };
-const generatePDF = async () => {
-  // Convert image URLs to Base64 if not already in Base64
-  const base64Promises = pdfOrder.value.map(async (item) => {
-    if (item.img && !item.img.startsWith('data:')) {
-      try {
-        item.img = await toBase64(item.img);  // Convert image to Base64
-      } catch (err) {
-        console.error('Image conversion error:', err);
-        item.img = '';  // Fallback in case of error
-      }
-    }
-  });
-
-  // Ensure all images are converted before generating the PDF
-  await Promise.all(base64Promises);
-
-  // Start generating the PDF
+//////////////////////////////////////////////////////////////////////////
+const generatePDF = () => {
   const pdf = new jsPDF('p', 'mm', 'a4');
-  const margin = 10;
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  let yPosition = margin;
+  
+  // Title Section
+  pdf.setFont('helvetica');
+  pdf.setFontSize(18);
+  pdf.text('Bill', 10, 10);
 
-  // Title
-  pdf.setFontSize(22);
-  pdf.setTextColor(40, 40, 40);
-  pdf.text('Bill', pageWidth / 2, yPosition, { align: 'center' });
-  yPosition += 15;
-
-  // User Info
+  // Partner Info Section
   pdf.setFontSize(12);
-  pdf.setTextColor(80, 80, 80);
-  pdf.text(`UserID: ${user.value.user_id || 'Unknown'}`, margin, yPosition);
-  yPosition += 6;
-  pdf.text(`User: ${user.value.name || 'Unknown'}`, margin, yPosition);
-  yPosition += 6;
-  pdf.text(`Date: ${currentDateTime.value}`, margin, yPosition);
-  yPosition += 10;
+  pdf.text(`User ID: ${user.value.user_id || 'Unknown'}`, 10, 20);
+  pdf.text(`User: ${user.value.name || 'Unknown'}`, 10, 26);
+  pdf.text(`Date: ${currentDateTime.value}`, 10, 32);
 
-  // Define the headers and body for the table
+  // Table Headers
   const headers = [['ID', 'Item', 'Image', 'Quantity', 'Price', 'Amount']];
-  const body = pdfOrder.value.map((pdfItem) => [
-    pdfItem.id.toString(),
-    pdfItem.name,
-    '',  // Placeholder for the image
-    pdfItem.stock.toString(),
-    pdfItem.currentprice.toString(),
-    (pdfItem.stock * pdfItem.currentprice).toString(),
+
+  // Map the pdfOrder data to rows in the table
+  const rows = pdfOrder.value.map((product) => [
+    product.id,
+    product.name,
+    { content: '', styles: { minCellHeight: 20 } }, // Placeholder for image
+    product.stock,
+    product.currentprice.toFixed(2),
+    (product.stock * product.currentprice).toFixed(2),
   ]);
 
-  // Define any summary or total rows
-  const summaryRows = [
-    ['', '', '', '', 'Total', totalAmount.value.toString()],
-  ];
+  // Calculate total amount
+  const totalAmount = pdfOrder.value.reduce(
+    (total, product) => total + product.stock * product.currentprice,
+    0
+  );
 
-  const fullTableBody = [...body, ...summaryRows];
+  // Add a total row at the end of the table
+  rows.push([
+    '', // Empty for ID
+    '', // Empty for Item
+    '', // Empty for Image
+    '', // Empty for Quantity
+    'Total', // Label "Total" under Price column
+    totalAmount.toFixed(2), // Total amount under Amount column
+  ]);
 
-  // Use autoTable to generate the table
+  // Generate the table with autoTable
   autoTable(pdf, {
-    startY: yPosition,
+    startY: 40, // Start below the user info
     head: headers,
-    body: fullTableBody,
-    styles: {
-      fontSize: 10,
-      cellPadding: 3,
-      halign: 'center',
-      valign: 'middle',
-    },
-    headStyles: {
-      fillColor: [209, 206, 206],  // Light gray background for the headers
-      textColor: [0, 0, 0],        // Black text
-      halign: 'center',
-    },
-    bodyStyles: {
-      lineWidth: 0.1,
-      textColor: [0, 0, 0],
-    },
-    tableLineColor: [23, 13, 13], // Black border color
-    tableLineWidth: 0.1,
-    didDrawCell: function (data) {
-      // Draw images inside the third column
-      if (data.column.index === 2 && pdfOrder.value[data.row.index]?.img) {
-        const img = pdfOrder.value[data.row.index].img;
-        const cell = data.cell;
-        const imageX = cell.x + (cell.width - 12) / 2;  // Center the image in the cell
-        const imageY = cell.y + (cell.height - 12) / 2;  // Center the image in the cell
-        pdf.addImage(img, 'JPEG', imageX, imageY, 12, 12);  // Adjust size as needed
+    body: rows,
+    didDrawCell: (data) => {
+      // Prevent rendering the image in the header and for the total row
+      if (data.row.section === 'body' && data.column.index === 2 && data.row.index !== rows.length - 1 && pdfOrder.value[data.row.index]?.img) {
+        pdf.addImage(
+          pdfOrder.value[data.row.index].img, 
+          'JPEG',
+          data.cell.x + 2, 
+          data.cell.y + 2, 
+          16, 16
+        ); // Drawing image in the cell
       }
     },
+    headStyles: {
+      fillColor: [0, 128, 255], // Header background color (e.g., blue)
+      textColor: [255, 255, 255], // Header text color (e.g., white)
+      fontStyle: 'bold', // Bold font in header
+    },
+    // Add styling for the table
+    styles: {
+      fontSize: 10, // Global font size
+      halign: 'center', // Center align text in all cells
+      valign: 'middle', // Vertical align text
+      lineColor: [0, 0, 0], // Border color
+      lineWidth: 0.5, // Border thickness
+      minCellHeight: 10, // Cell height
+      textColor: [0, 0, 0], // Text color
+    },
+    // Customize specific columns (optional)
+    columnStyles: {
+      0: { halign: 'center' }, // ID column center aligned
+      1: { halign: 'left' }, // Item column left aligned
+      2: { halign: 'center' }, // Image placeholder centered
+      3: { halign: 'center' }, // Quantity center aligned
+      4: { halign: 'right' }, // Price right aligned
+      5: { halign: 'right' }, // Amount right aligned
+    },
+    // Add table border
+    tableLineColor: [0, 0, 0], // Border color for table
+    tableLineWidth: 0.5, // Border width for table
   });
 
-  // Save the generated PDF
+  // Save the PDF
   pdf.save('bill.pdf');
 };
 
+// const generatePDF = () => {
+//   const pdf = new jsPDF('p', 'mm', 'a4');
+  
+//   // Title Section
+//   pdf.setFont('helvetica', );
+//   pdf.setFontSize(18);
+//   pdf.text('Bill ', 10, 10);
+
+//   // Partner Info Section
+//   pdf.setFontSize(12);
+//   pdf.text(`User ID: ${user.value.user_id || 'Unknown'}`, 10, 20);
+//   pdf.text(`User: ${user.value.name || 'Unknown'}`, 10, 26);
+//   pdf.text(`Date: ${currentDateTime.value}`, 10, 32);
+
+//   // Table Headers
+//   const headers = [['ID', 'Item', 'Image', 'Quantity', 'Price', 'Amount']];
+
+//   // Map the pdfOrder data to rows in the table
+//   const rows = pdfOrder.value.map((product) => [
+//     product.id,
+//     product.name,
+//     { content: '', styles: { minCellHeight: 20 } }, // Placeholder for image
+//     product.stock,
+//     product.currentprice.toFixed(2),
+//     (product.stock * product.currentprice).toFixed(2),
+//   ]);
+
+//   // Calculate total amount
+//   const totalAmount = pdfOrder.value.reduce(
+//     (total, product) => total + product.stock * product.currentprice,
+//     0
+//   );
+
+//   // Add a total row at the end of the table
+//   rows.push([
+//     '', // Empty for ID
+//     '', // Empty for Item
+//     '', // Empty for Image
+//     '', // Empty for Quantity
+//     'Total', // Label "Total" under Price column
+//     totalAmount.toFixed(2), // Total amount under Amount column
+//   ]);
+
+//   // Generate the table with autoTable
+//   autoTable(pdf, {
+//     startY: 40, // Start below the user info
+//     head: headers,
+//     body: rows,
+//     didDrawCell: (data) => {
+//       // Prevent rendering the image in the header
+//       if (data.row.section === 'body' && data.column.index === 2 && pdfOrder.value[data.row.index]?.img) {
+//         pdf.addImage(
+//           pdfOrder.value[data.row.index].img, 
+//           'JPEG',
+//           data.cell.x + 2, 
+//           data.cell.y + 2, 
+//           16, 16
+//         ); // Drawing image in the cell
+//       }
+//     },
+//     // Add styling for the table
+//     styles: {
+//       fontSize: 10, // Global font size
+//       halign: 'center', // Center align text in all cells
+//       valign: 'middle', // Vertical align text
+//       lineColor: [0, 0, 0], // Border color
+//       lineWidth: 0.5, // Border thickness
+//       minCellHeight: 10, // Cell height
+//       // textColor: [0, 0, 0], // Text color
+//     },
+//     // Customize specific columns (optional)
+//     columnStyles: {
+//       0: { halign: 'center' }, // ID column center aligned
+//       1: { halign: 'left' }, // Item column left aligned
+//       2: { halign: 'center' }, // Image placeholder centered
+//       3: { halign: 'center' }, // Quantity center aligned
+//       4: { halign: 'right' }, // Price right aligned
+//       5: { halign: 'right' }, // Amount right aligned
+//     },
+//     // Add table border
+//     tableLineColor: [0, 0, 0], // Border color for table
+//     tableLineWidth: 0.5, // Border width for table
+//   });
 
 
-//////////////////////////////////////////////////////////////////////////////
-// const postBillToDatabase = () => {
-//   const billData = {
-//   userId: user.value.user_id,
-//   products: pdfOrder.value.map(item => ({
-//     productId: item.id,
-//     quantity: item.stock,
-//     price: item.currentprice
-//   })),
+
+//   // Save the PDF
+//   pdf.save('bill.pdf');
 // };
-
-//   console.log('Posting bill data:', JSON.stringify(billData, null, 2));
-//   billStore.postBill(billData);
-// };
+///////////////////////////////////////////////////////////////////////////
 const postBillToDatabase = async () => {
   const billData = {
     userId: user.value.user_id,

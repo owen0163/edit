@@ -3,10 +3,10 @@
     <v-container fluid class="fill-height pa-0">
       <v-img src="https://wallpapers.com/images/hd/hd-orange-wavelength-art-fbcwek67vdsjxlgv.jpg" class="fill-height"
         cover>
-        <v-container>
+        <v-container class=" mt-50px mt-15">
           <v-row justify="center">
-            <v-col cols="12" sm="5" md="3" lg="2" xl="3" v-for="product in products.products" :key="product.id">
-              <v-card class="mx-auto mt-50px mt-15" max-width="200">
+            <v-col cols="10" sm="5" md="3" lg="2" xl="3" v-for="product in products.products" :key="product.id">
+              <v-card class="mx-auto" max-width="200">
                 <div class="d-flex justify-center">
                   <v-img aspect-ratio="4/3" :height="150" :width="150" :src="product.image" contain></v-img>
                 </div>
