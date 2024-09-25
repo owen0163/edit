@@ -248,6 +248,14 @@ const generatePDF = () => {
     // Add table border
     tableLineColor: [0, 0, 0], // Border color for table
     tableLineWidth: 0.5, // Border width for table
+
+    margin: { bottom : 20 }, // Adjust top margin
+    pageBreak: 'auto', // Enable automatic page breaks when content overflows
+
+
+    didParseCell: (hookData) => {
+      // Add this if you need to manipulate rows before rendering
+    }
   });
 
   // Save the PDF

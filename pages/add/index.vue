@@ -1,7 +1,9 @@
 <template>
     <v-app>
         <v-container fluid class="fill-height pa-0">
-            <v-img src="https://static.vecteezy.com/ti/gratis-vektor/p1/24596331-hintergrund-design-mit-orange-farbe-geeignet-zum-4k-auflosung-vektor.jpg" class="fill-height" cover>
+            <v-img
+                src="https://static.vecteezy.com/ti/gratis-vektor/p1/24596331-hintergrund-design-mit-orange-farbe-geeignet-zum-4k-auflosung-vektor.jpg"
+                class="fill-height" cover>
                 <v-container>
                     <v-row>
                         <v-col cols="3" class="mt-13">
@@ -36,6 +38,10 @@
                                             :rules="[rules.stock]"></v-text-field>
                                         <v-text-field v-model="product.maxstock" label="Max Stock" type="number"
                                             required :rules="[rules.maxStock]"></v-text-field>
+                                        <!-- ///////////////////////////////////////////////// -->
+                                        <v-select v-model="product.type" :items="type" :rules="[rules.type]"
+                                            label="type" required></v-select>
+                                        <!-- ///////////////////////////////////////////////// -->
                                         <v-text-field v-model="product.image" label="Product Image URL" required
                                             :rules="[rules.imageURL]"></v-text-field>
 
@@ -66,21 +72,21 @@
                                         cover></v-carousel-item>
                                 </v-carousel>
                             </v-card>
-                          
+
                         </v-col>
                     </v-row>
                 </v-container>
             </v-img>
         </v-container>
     </v-app>
-                <v-container>
-                    <v-row>
-                        <v-col>
-                            <Header11></Header11>
-                        </v-col>
-                    </v-row>
-                </v-container>
-         
+    <v-container>
+        <v-row>
+            <v-col>
+                <Header11></Header11>
+            </v-col>
+        </v-row>
+    </v-container>
+
 </template>
 
 <script setup>
@@ -93,8 +99,8 @@ const productStore = useProductStore();
 const router = useRouter();
 
 definePageMeta({
-  middleware: 'auth',
-  middleware: 'admin'
+    middleware: 'auth',
+    middleware: 'admin'
 });
 
 
@@ -104,6 +110,7 @@ const product = ref({
     currentprice: 0,
     stock: 0,
     mapStock: 0,
+    type: '',
     image: '',
 });
 const valid = ref(false);
@@ -125,6 +132,7 @@ const addProduct = async () => {
             currentprice: product.value.currentprice,
             stock: product.value.stock,
             maxstock: product.value.maxstock,
+            type: product.value.type,
             image: product.value.image,
         };
 
@@ -136,6 +144,7 @@ const addProduct = async () => {
             currentprice: 0,
             stock: 0,
             maxstock: 0,
+            type: '',
             image: '',
         };
         alert('Add Product successfully');
@@ -155,7 +164,7 @@ const addProduct = async () => {
 
 <script>
 export default {
- 
+
     data() {
         return {
             rules: {
@@ -165,7 +174,16 @@ export default {
                 stock: value => !!value || 'Please input stock',
                 maxStock: value => !!value || 'Please input max stock',
                 imageURL: value => !!value || 'Please input image URL',
-            }
+                type: value => !!value || 'Please select type',
+            },
+            select: null,
+            type: [
+                'chips',
+                'beer',
+                'energy drink',
+                'soda',
+                'milk',
+            ],
         }
     }
 }
@@ -173,6 +191,7 @@ export default {
 
 <style scoped>
 .fill-height {
-  height: 100vh; /* Full screen height */
+    height: 100vh;
+    /* Full screen height */
 }
 </style>

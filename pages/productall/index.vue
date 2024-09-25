@@ -14,10 +14,12 @@
                     <!-- Display products in v-data-table -->
                     <v-data-table :headers="headers" :items="filteredProducts" :search="search">
                         <!-- Custom slot to display product image -->
+                         
                         <template v-slot:item.image="{ item }">
                             <v-img :src="item.image || '/images/fallback-image.jpg'" max-width="75"
                                 max-height="75"></v-img>
                         </template>
+                        
                     </v-data-table>
                 </v-card>
             </v-col>
@@ -54,6 +56,7 @@ const search = ref('');
 const headers = [
 { align: 'start', key: 'id', sortable: true, title: 'Product ID' },
     { align: 'start', key: 'name', sortable: true, title: 'Product Name' },
+    { align: 'start', key: 'type', title: 'type' },
     { align: 'center', key: 'image', title: 'Image', sortable: false },
     { align: 'start', key: 'stock', title: 'Stock' },
     { align: 'start', key: 'maxstock', title: 'max Stock' },
