@@ -58,7 +58,11 @@ export const usePdf = defineStore('usePdf', () => {
       icon: "success",
       title: "ເພີ້ມສິນຄ້າແລ້ວ",
       showConfirmButton: false,
-      timer: 3000
+      timer: 3000,
+      customClass: {
+        title: 'noto-serif-lao', // Use this class for the title
+        popup: 'noto-serif-lao', // Use this class for the popup
+      }
     });
   };
 
@@ -68,7 +72,11 @@ export const usePdf = defineStore('usePdf', () => {
       icon: "error",
       title: "ໄດ້ມີເພີ້ມສິນຄ້າແລ້ວ",
       showConfirmButton: false,
-      timer: 3000
+      timer: 3000,
+      customClass: {
+        title: 'noto-serif-lao', // Use this class for the title
+        popup: 'noto-serif-lao', // Use this class for the popup
+      }
     });
   };
 

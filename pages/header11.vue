@@ -50,9 +50,9 @@
           </v-menu>
         </div>
         <!-- //////////////////////////////////////////////////////////////////////////////////// -->
-      </v-app-bar>
+      </v-app-bar >
       <v-navigation-drawer v-model="drawer" location="left" temporary class="bg-grey-lighten-4">
-        <v-list>
+        <v-list class="noto-serif-lao">
           <v-list-item href="/products" class="text-deep-orange-darken-3 mdi mdi-cube">ສິນຄ້າ</v-list-item>
           <v-list-item href="/productall" class="text-deep-orange-darken-3 mdi mdi-book-open">ຂໍ້ມູນສິນຄ້າ</v-list-item>
 
@@ -61,7 +61,7 @@
             class="text-deep-orange-darken-3 mdi mdi-forklift">ເພີ້ມມູນສິນຄ້າ</v-list-item>
           <v-list-item v-if="isAdmin" href="/about"
             class="text-deep-orange-darken-3 mdi mdi-pen">ຈັດການຂໍ້ມູນສິນຄ້າ</v-list-item>
-
+            <v-list-item v-if="isAdmin" href="/register" class="text-deep-orange-darken-3 mdi mdi-account">ສະໝັກ User</v-list-item>
 
           <v-list-item href="/bills" class="text-deep-orange-darken-3 mdi mdi-printer">ໃບບິນ</v-list-item>
           <v-list-item href="/history"
@@ -160,3 +160,16 @@ export default {
   }
 }
 </script>
+
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Lao:wght@100..900&display=swap');
+
+.noto-serif-lao {
+  font-family: "Noto Serif Lao", serif;
+  font-weight: 500; /* Adjust this value based on your requirement */
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 84.9;
+}
+</style>

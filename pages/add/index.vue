@@ -180,7 +180,7 @@ export default {
             type: [
                 'chips',
                 'beer',
-                'energy drink',
+                'energydrink',
                 'soda',
                 'milk',
             ],

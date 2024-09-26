@@ -1,7 +1,9 @@
+<!-- energy drink -->
+
 <template>
     <v-container fluid>
       <v-row class="pa-4" dense>
-        <v-col v-for="product in productChips" :key="product.id" cols="12" sm="6" md="4" lg="3">
+        <v-col v-for="product in productenergydrink" :key="product.id" cols="12" sm="6" md="4" lg="3">
           <v-card class="mx-auto" max-width="200">
             <div class="d-flex justify-center">
               <v-img aspect-ratio="4/3" :height="150" :width="150" :src="product.image" contain></v-img>
@@ -91,8 +93,8 @@ onMounted(async () => {
 });
 
 // Define a computed property to filter products by type
-const productChips = computed(() => {
-    return products.products.filter(product => product.type === 'chips');
+const productenergydrink = computed(() => {
+    return products.products.filter(product => product.type === 'energydrink');
 });
 
 const addProduct = (id, currentprice) => {

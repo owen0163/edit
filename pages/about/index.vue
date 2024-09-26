@@ -3,6 +3,11 @@
         <v-container fluid class="fill-height pa-0">
             <v-img src="https://wallpapers.com/images/hd/hd-orange-wavelength-art-fbcwek67vdsjxlgv.jpg" class="fill-height" cover>
   <v-container class="mt-50px mt-15">
+    <v-row>
+      <v-col>
+
+      </v-col>
+    </v-row>
     <v-row justify="center">
       <v-col cols="10" sm="5" md="3" lg="2" xl="3" v-for="product in products.products" :key="product.id">
         <div>
@@ -138,7 +143,7 @@ const valid = ref(true);
 const products = useProductStore();
 const selectedProduct = ref(null);
 const selectedProductId = ref(null);
-
+const productType = 'desiredType';
 definePageMeta({
     middleware: 'auth',
   middleware: 'admin'
@@ -146,6 +151,7 @@ definePageMeta({
 
 
 onMounted(async () => {
+
   await products.fetchProducts();
 
 
