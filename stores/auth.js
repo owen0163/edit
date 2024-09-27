@@ -53,6 +53,22 @@ export const useAuthStore = defineStore('auth', {
         console.error('Error fetching user:', error);
       }
     },
+    async register(email, password, name, role) {
+      try {
+        const response = await axios.post('http://localhost:3300/api/register', {
+          email,
+          password,
+          name,
+          role,
+        });
+        // Handle response and store user data
+        this.user = response.data;
+        this.token = response.data.token; // Assuming the token is returned
+      } catch (error) {
+        console.error('Registration failed:', error);
+        throw error;
+      }
+    },
     setToken({ email, name, role, user_id }) {
       this.token = { email, name, role, user_id }; // Adjust based on actual usage
     },
