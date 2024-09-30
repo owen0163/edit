@@ -72,6 +72,7 @@
             class="text-deep-orange-darken-3 mdi mdi-file-multiple">ປິ້ນປະຫວັດໃບບິນ</v-list-item>
           <v-list-item href="/partner" class="text-deep-orange-darken-3 mdi mdi-printer">ປະຫວັດ</v-list-item>
 
+
         </v-list>
       </v-navigation-drawer>
     </v-layout>
