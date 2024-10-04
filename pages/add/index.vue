@@ -183,6 +183,8 @@ export default {
                 'energydrink',
                 'soda',
                 'milk',
+                'snacks',
+                'water',
             ],
         }
     }
