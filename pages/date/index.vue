@@ -18,7 +18,7 @@
 
                             <v-dialog v-model="modal1" width="auto">
                                 <v-time-picker v-if="modal1" v-model="startTime" @click:cancel="modal1 = false"
-                                    @click:save="modal1 = false" format="24hr"></v-time-picker>
+                                    @click:save="modal1 = false" format="24hr" color="green-lighten-1"></v-time-picker>
                             </v-dialog>
                         </v-col>
 
@@ -29,7 +29,7 @@
 
                             <v-dialog v-model="modal2" width="auto">
                                 <v-time-picker v-if="modal2" v-model="endTime" @click:cancel="modal2 = false"
-                                    @click:save="modal2 = false" format="24hr"></v-time-picker>
+                                    @click:save="modal2 = false" format="24hr" color="green-lighten-1"></v-time-picker>
                             </v-dialog>
                         </v-col>
                     </v-row>
