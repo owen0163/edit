@@ -1,17 +1,17 @@
 <template>
     <v-container class="mt-15">
         <v-row>
-            <v-col cols="12" md="12" lg="8">
+            <v-col cols="12" md="12" lg="4">
                 <v-card class="mt-5" max-width="300">
                     <v-row justify="center">
                         <!-- Start Date Picker -->
-                        <v-col cols="12" md="12" lg="8">
+                        <v-col cols="10">
                             <v-text-field v-model="date" label="Start Date" clearable type="date" solo
                                 style="max-width: 200px" class="ml-4"></v-text-field>
                         </v-col>
 
                         <!-- Start Time Picker -->
-                        <v-col cols="12" md="12" lg="8">
+                        <v-col cols="10" >
                             <v-text-field v-model="timeStart" label="Start" prepend-icon="mdi-clock-time-four-outline"
                                 readonly style="max-width: 200px" @click="modal1 = true" class="ml-2"></v-text-field>
 
@@ -22,7 +22,7 @@
                         </v-col>
 
                         <!-- End Time Picker -->
-                        <v-col cols="12" md="12" lg="8">
+                        <v-col cols="10">
                             <v-text-field v-model="timeEnd" label="End" prepend-icon="mdi-clock-time-four-outline"
                                 readonly style="max-width: 200px" @click="modal2 = true" class="ml-2"></v-text-field>
 
@@ -37,31 +37,38 @@
                             <v-btn color="#1976D2" variant="flat" @click="handleFetchData">
                                 Fetch Data
                             </v-btn>
+                            <v-btn color="#D32F2F" variant="flat" class="ml-2" @click="clearData">
+                                clear
+                            </v-btn>
                         </v-col>
                     </v-row>
                 </v-card>
             </v-col>
-        </v-row>
+   
 
         <!-- Display fetched data -->
-        <v-row>
-            <v-col cols="12">
+
+            <v-col cols="12" md="12" lg="8">
                 <v-card class="mt-5">
                     <v-card-title>Fetched Data</v-card-title>
                     <v-card-subtitle v-if="loading">Loading...</v-card-subtitle>
                     <v-card-subtitle v-if="error" class="text-error">{{ error }}</v-card-subtitle>
 
-                    <v-data-table
-                        v-if="fetchedData && fetchedData.sales"
-                        :items="fetchedData.sales"
-                        :headers="headers"
-                        class="elevation-1"
-                    >
+                    <v-data-table v-if="fetchedData && fetchedData.sales" :items="fetchedData.sales" 
+                        class="elevation-1 ">
                         <template v-slot:no-data>
                             <v-alert type="info">No data available for the selected range.</v-alert>
                         </template>
                     </v-data-table>
                 </v-card>
+            </v-col>
+        </v-row>
+    </v-container>
+
+    <v-container>
+        <v-row>
+            <v-col>
+                <Header11></Header11>
             </v-col>
         </v-row>
     </v-container>
@@ -84,13 +91,13 @@ export default defineComponent({
             timeEnd: null, // Holds the selected end time
             modal1: false, // Controls the start time dialog visibility
             modal2: false, // Controls the end time dialog visibility
-            headers: [ // Define headers for the table
-                { text: "Sale ID", value: "id" },
-                { text: "Product", value: "product_name" },
-                { text: "Quantity", value: "quantity" },
-                { text: "Amount", value: "amount" },
-                { text: "Sale Date", value: "sale_datetime" },
-            ],
+            // headers: [ // Define headers for the table
+            //     { text: "Sale ID", value: "id" },
+            //     { text: "Product", value: "product_name" },
+            //     { text: "Quantity", value: "quantity" },
+            //     { text: "Amount", value: "amount" },
+            //     { text: "Sale Date", value: "sale_datetime" },
+            // ],
         };
     },
     setup() {
@@ -111,7 +118,7 @@ export default defineComponent({
                 end: this.timeEnd,
             };
 
-            console.log("Payload being sent:", payload);
+            // console.log("Payload being sent:", payload);
 
             try {
                 await this.fetchData(payload);
@@ -120,6 +127,16 @@ export default defineComponent({
                 console.error("Failed to fetch data:", error);
             }
         },
+        clearData() {
+        // Clear the date and time inputs
+        this.date = null;
+        this.timeStart = null;
+        this.timeEnd = null;
+
+        // Clear fetched data by resetting it in the store
+        const dataStore = useDataStore();
+        dataStore.fetchedData = null;
+    },
     }
 
 });
