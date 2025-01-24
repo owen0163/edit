@@ -20,7 +20,7 @@
     "jspdf-autotable": "^3.8.3",
     "jwt-decode": "^4.0.0",
     "middleware": "^1.0.0",
-    "nuxt": "^3.13.1",
+    "nuxt": "^3.15.2",
     "nuxt-vuetify": "^1.0.1",
     "pinia": "^2.1.7",
     "sweetalert2": "^11.12.4",
